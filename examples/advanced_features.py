@@ -2,6 +2,7 @@ from pyorbit_link.tracker import SatTracker
 from pyorbit_link.calculator import LinkCalculator
 from pyorbit_link.api import CelesTrakAPI
 from pyorbit_link.visualizer import SatVisualizer
+from pyorbit_link.utils import LocationProvider
 import datetime
 
 def main():
@@ -14,8 +15,17 @@ def main():
     name, l1, l2 = tle_data
     tracker = SatTracker(l1, l2, name)
     
-    # 2. El Segundo, CA Observer
-    LAT, LON, ALT = 33.9192, -118.4165, 30.0
+    # 2. Get User Location (ZIP or City)
+    loc_input = input("Enter your ZIP code or City (e.g., 90210 or 'Los Angeles'): ")
+    lp = LocationProvider()
+    LAT, LON, address = lp.get_lat_lon(loc_input)
+    
+    if not LAT:
+        print("❌ Could not resolve location. Using default (El Segundo, CA).")
+        LAT, LON, ALT = 33.9192, -118.4165, 30.0
+    else:
+        print(f"✅ Found: {address} ({LAT}, {LON})")
+        ALT = 30.0
     
     # 3. Calculate Antenna Gain for a 1.2m Ka-band dish (30GHz)
     FREQ = 30e9
