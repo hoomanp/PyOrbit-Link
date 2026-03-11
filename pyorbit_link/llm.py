@@ -1,18 +1,44 @@
 import os
 import json
+import glob
 from dotenv import load_dotenv
 
 load_dotenv()
 
 class MissionAI:
-    """Unified LLM interface for Azure, Amazon, and Google Cloud services."""
+    """RAG-Enabled AI Assistant for Satellite Systems Engineering."""
     
     def __init__(self, provider=None):
         self.provider = provider or os.getenv("SAT_AI_PROVIDER", "google").lower()
+        self.kb_path = os.path.join(os.path.dirname(__file__), '..', 'knowledge_base')
 
-    def get_analysis(self, context_prompt, telemetry_data):
-        """Asks the AI to analyze satellite link data and provide engineering insights."""
-        full_prompt = f"{context_prompt}\nTelemetry Data: {json.dumps(telemetry_data, indent=2)}\nProvide a concise analysis for a Satellite Systems Engineer."
+    def _get_kb_context(self):
+        """Retrieves and consolidates all documents from the knowledge base."""
+        kb_content = ""
+        for file in glob.glob(os.path.join(self.kb_path, "*.txt")):
+            with open(file, 'r') as f:
+                kb_content += f"\n--- Document: {os.path.basename(file)} ---\n"
+                kb_content += f.read() + "\n"
+        return kb_content
+
+    def get_analysis(self, user_prompt, telemetry_data):
+        """Asks the AI to analyze data while GROUNDED in technical documentation."""
+        kb_context = self._get_kb_context()
+        
+        # Construct the "Grounded" prompt with the latest context features
+        system_instructions = (
+            "You are a Satellite Systems Engineer specializing in LEO constellations (e.g., Kuiper, Starlink).\n"
+            "Use the provided Technical Standards context to justify your analysis.\n"
+            "If the telemetry data violates any standard (e.g., elevation too low), highlight it as a 'Mission Risk'."
+        )
+        
+        full_prompt = (
+            f"{system_instructions}\n\n"
+            f"--- TECHNICAL STANDARDS CONTEXT ---\n{kb_context}\n"
+            f"--- CURRENT TELEMETRY ---\n{json.dumps(telemetry_data, indent=2)}\n\n"
+            f"USER REQUEST: {user_prompt}\n"
+            "Provide a highly detailed, grounded response."
+        )
 
         if self.provider == "azure":
             return self._call_azure(full_prompt)
@@ -31,7 +57,7 @@ class MissionAI:
             azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
         )
         response = client.chat.completions.create(
-            model=os.getenv("AZURE_DEPLOYMENT_NAME", "gpt-4"),
+            model=os.getenv("AZURE_DEPLOYMENT_NAME", "gpt-4-turbo"),
             messages=[{"role": "user", "content": prompt}]
         )
         return response.choices[0].message.content
@@ -39,16 +65,19 @@ class MissionAI:
     def _call_amazon(self, prompt):
         import boto3
         client = boto3.client("bedrock-runtime", region_name="us-east-1")
+        # Using Claude 3 Sonnet (Large Context supported in Bedrock)
         body = json.dumps({
-            "prompt": f"\n\nHuman: {prompt}\n\nAssistant:",
-            "max_tokens_to_sample": 500
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 2048,
+            "messages": [{"role": "user", "content": prompt}]
         })
-        response = client.invoke_model(body=body, modelId="anthropic.claude-v2")
-        return json.loads(response.get("body").read())["completion"]
+        response = client.invoke_model(body=body, modelId="anthropic.claude-3-sonnet-20240229-v1:0")
+        return json.loads(response.get("body").read())["content"][0]["text"]
 
     def _call_google(self, prompt):
         import google.generativeai as genai
         genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+        # Using Gemini 1.5 Flash (1M token context window)
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         return response.text
