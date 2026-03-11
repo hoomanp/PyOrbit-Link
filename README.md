@@ -22,15 +22,15 @@ This project demonstrates the core technical competencies required for high-spee
 ### 📱 Full-Stack Mobile & AI Integration
 - **Flask-powered Mobile Client:** A cross-platform web interface optimized for iPhone and Android.
 - **HTML5 Geolocation:** Uses your phone's native GPS to run "over-the-shoulder" tracking and link analysis from your exact physical location.
-- **🤖 AI Mission Assistant:** Intelligent link analysis powered by **Azure OpenAI**, **Amazon Bedrock**, or **Google Gemini**. Automatically interprets link budget data to provide engineering recommendations and troubleshooting steps.
+- **🤖 RAG-Enabled Mission Assistant:** Intelligent link analysis powered by **Azure OpenAI**, **Amazon Bedrock (Claude 3.5)**, or **Google Gemini (1.5 Pro)**. 
+- **📚 Grounded Knowledge Base:** Uses **Retrieval-Augmented Generation (RAG)** to "read" technical documents (like ITU-R standards) in the `knowledge_base/` folder. It provides engineering recommendations and flags "Mission Risks" based on actual satellite regulations.
 
 ---
 
-## ☁️ Multi-Cloud AI Support
-This project features a unified AI wrapper (`llm.py`) that allows you to switch between the world's leading LLM providers with a single environment variable:
-- **Amazon Bedrock:** Optimized for AWS-native satellite infrastructure.
-- **Azure OpenAI:** High-reliability enterprise AI.
-- **Google Gemini:** Advanced multimodal analysis.
+## ☁️ Multi-Cloud & RAG Support
+This project features a modular AI layer (`llm.py`) that utilizes the latest **Long-Context** windows and RAG architectures:
+- **Grounded Analysis:** The AI automatically scans `knowledge_base/*.txt` to provide context-aware responses.
+- **Provider Agnostic:** Switch between **Amazon Bedrock**, **Azure**, or **Google** via environment variables.
 
 ## 🛠️ Tech Stack
 - **Languages:** Python 3.9+
