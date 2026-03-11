@@ -1,0 +1,5 @@
+skyfield
+numpy
+matplotlib
+scipy
+pandas
