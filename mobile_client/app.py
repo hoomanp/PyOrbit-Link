@@ -9,8 +9,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from pyorbit_link.tracker import SatTracker
 from pyorbit_link.api import CelesTrakAPI
 from pyorbit_link.calculator import LinkCalculator
+from pyorbit_link.llm import MissionAI
 
 app = Flask(__name__)
+ai_assistant = MissionAI()
 
 # Cache TLE data (fetch once per server start for efficiency)
 TLE_CACHE = CelesTrakAPI.get_tle_by_norad_id(25544)  # ISS (NORAD 25544)
@@ -40,16 +42,33 @@ def track_iss():
     freq = 2.4e9
     fspl = LinkCalculator.calculate_fspl(freq, dist_km)
     
+    telemetry = {
+        "azimuth": f"{az:.2f}°",
+        "elevation": f"{el:.2f}°",
+        "distance": f"{dist_km:.2f} km",
+        "fspl_db": f"{fspl:.2f} dB"
+    }
+
+    # Use AI to analyze the link
+    try:
+        ai_analysis = ai_assistant.get_analysis(
+            "Analyze this satellite link budget. Is the signal too weak for a 2.4GHz WiFi link? Suggest improvements.",
+            telemetry
+        )
+    except Exception as e:
+        ai_analysis = f"AI Analysis Unavailable: {e}"
+
     # Find next pass
     passes = tracker.find_events(lat, lon, alt_m=10.0, duration_days=1)
     next_pass = passes[0] if passes else None
     
     return jsonify({
         "sat_name": name,
-        "azimuth": f"{az:.2f}°",
-        "elevation": f"{el:.2f}°",
-        "distance": f"{dist_km:.2f} km",
-        "fspl_db": f"{fspl:.2f} dB",
+        "azimuth": telemetry["azimuth"],
+        "elevation": telemetry["elevation"],
+        "distance": telemetry["distance"],
+        "fspl_db": telemetry["fspl_db"],
+        "ai_analysis": ai_analysis,
         "next_pass": next_pass
     })
 
@@ -60,7 +79,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PyOrbit-Link Mobile</title>
+    <title>PyOrbit-Link Mobile AI</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f1f5f9; text-align: center; padding: 20px; }
         .card { background: #1e293b; border-radius: 12px; padding: 20px; margin: 15px auto; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
@@ -71,11 +90,12 @@ HTML_TEMPLATE = """
         .label { color: #94a3b8; }
         .value { font-weight: bold; }
         #status { margin-top: 15px; color: #fbbf24; font-size: 0.9rem; }
+        .ai-box { background: #0c4a6e; border-left: 4px solid #38bdf8; padding: 15px; text-align: left; font-size: 0.9rem; margin-top: 20px; border-radius: 4px; }
     </style>
 </head>
 <body>
-    <h1>🛰️ PyOrbit-Link Mobile</h1>
-    <p>Track the ISS from your exact GPS location.</p>
+    <h1>🛰️ PyOrbit-Link AI</h1>
+    <p>Live Tracking & Smart Link Analysis</p>
     
     <div class="card">
         <button onclick="getLocation()">📍 Use My Location</button>
@@ -90,6 +110,9 @@ HTML_TEMPLATE = """
         <div class="data-row"><span class="label">Distance</span><span class="value" id="distance">-</span></div>
         <div class="data-row"><span class="label">Link Loss (FSPL)</span><span class="value" id="fspl">-</span></div>
         
+        <h3>🤖 AI Mission Analysis</h3>
+        <div id="ai_analysis" class="ai-box">Analyzing link...</div>
+
         <h3>Next Pass</h3>
         <div class="data-row"><span class="label">Rise Time</span><span class="value" id="pass_rise">-</span></div>
         <div class="data-row"><span class="label">Set Time</span><span class="value" id="pass_set">-</span></div>
@@ -125,6 +148,7 @@ HTML_TEMPLATE = """
                 document.getElementById('elevation').textContent = data.elevation;
                 document.getElementById('distance').textContent = data.distance;
                 document.getElementById('fspl').textContent = data.fspl_db;
+                document.getElementById('ai_analysis').textContent = data.ai_analysis;
                 
                 if(data.next_pass) {
                     document.getElementById('pass_rise').textContent = new Date(data.next_pass.Rise).toLocaleTimeString();
@@ -149,5 +173,4 @@ HTML_TEMPLATE = """
 """
 
 if __name__ == '__main__':
-    # Run on all interfaces (0.0.0.0) so it's accessible on your local network
     app.run(host='0.0.0.0', port=5000, debug=True)

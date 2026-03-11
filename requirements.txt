@@ -6,3 +6,7 @@ pandas
 requests
 geopy
 flask
+openai
+boto3
+google-generativeai
+python-dotenv
