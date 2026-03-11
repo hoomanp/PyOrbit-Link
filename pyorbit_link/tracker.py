@@ -26,8 +26,11 @@ class SatTracker:
                 current_pass = {}
         return passes
 
-    def get_position_velocity(self, time_obj=None):
-        """Returns the satellite's position (km) and velocity (km/s) at a given time."""
+    def get_aer(self, lat, lon, alt_m, time_obj=None):
+        """Returns Azimuth, Elevation, and Range (Distance) from a ground observer."""
+        observer = Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=alt_m)
         t = self.ts.now() if not time_obj else self.ts.from_datetime(time_obj)
-        geocentric = self.sat.at(t)
-        return geocentric.position.km, geocentric.velocity.km_per_s
+        difference = self.sat - observer
+        topocentric = difference.at(t)
+        alt, az, distance = topocentric.altaz()
+        return az.degrees, alt.degrees, distance.km
