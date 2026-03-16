@@ -1,0 +1,5 @@
+ITU-R S.1503-3 (Reference Summary for LEO):
+- Minimum Elevation Angle: For commercial LEO constellations, elevations below 10 degrees are typically discarded due to extreme atmospheric noise.
+- Rain Fade (Ka-band): Attenuation at 30GHz (uplink) can exceed 20dB during heavy rain (>50mm/hr). Adaptive Power Control is required.
+- Doppler Compensation: SGP4 models require frequent TLE updates (every 24-48 hours) to maintain <1km tracking accuracy.
+- Link Budget Safety Margin: A link margin of at least 3dB is recommended for LEO missions to account for antenna pointing errors.

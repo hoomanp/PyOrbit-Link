@@ -3,3 +3,11 @@ numpy
 matplotlib
 scipy
 pandas
+requests
+geopy
+flask
+openai
+boto3
+google-generativeai
+python-dotenv
+sentence-transformers
