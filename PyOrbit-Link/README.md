@@ -132,6 +132,7 @@ The project follows a modular **Systems Integration** pattern:
 - **Security:** Added full input validation and coordinate range checks on the `/api/track` endpoint.
 - **Optimization:** `SatTracker` is now instantiated once at server startup and reused across all requests.
 - **Optimization:** `kb_path` in `llm.py` is now resolved with `os.path.abspath()`.
+- **Fix:** `requirements.txt` — removed `scipy`, `pandas`, and `sentence-transformers`, which were listed but not imported anywhere in the codebase.
 
 ---
 
