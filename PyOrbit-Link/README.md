@@ -40,6 +40,8 @@ This project features a modular AI layer (`llm.py`) that utilizes the latest **L
 - **API/Networking:** Requests, Flask (REST API)
 - **Geocoding:** Geopy (Nominatim)
 - **Visualization:** Matplotlib
+- **AI / Multi-Cloud:** OpenAI SDK, Boto3 (AWS Bedrock), Google Generative AI
+- **Configuration:** python-dotenv
 - **Data Export:** JSON Telemetry Logging
 
 ---
