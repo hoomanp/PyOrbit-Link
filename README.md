@@ -1,92 +1,108 @@
-# 🛰️ PyOrbit-Link: LEO Satellite Tracker & RF Link Budget Toolkit
+# 🛰️ LEO Orbital Systems (LOS) — Monorepo
 
-**PyOrbit-Link** is a comprehensive Python-based suite designed for the mission-critical analysis of Low Earth Orbit (LEO) satellite communications. Developed with an emphasis on systems integration, it bridges the gap between orbital mechanics and telecommunications engineering.
+**LOS** is a monorepo containing two complementary Python projects for modelling and analysing Low Earth Orbit (LEO) satellite systems. Together they cover the full stack — from orbital mechanics and RF link budgeting to network simulation and AI-powered diagnostics.
 
-This project demonstrates the core technical competencies required for high-speed, low-latency satellite constellations like **Amazon Project Kuiper** and **SpaceX Starlink**.
-
----
-
-## 🚀 Key Features
-
-### 🌌 Orbital Domain
-- **CelesTrak API Integration:** Automatically fetches high-precision, real-time Two-Line Elements (TLEs) via NORAD IDs.
-- **Precision Tracking:** High-fidelity orbit propagation using the `Skyfield` library (SGP4 model).
-- **Global Geocoding:** Integrated `geopy` support allowing users to track passes from a ZIP code, city name, or precise GPS coordinates.
-
-### 📡 RF & Telecommunications Domain
-- **Dynamic Doppler Analysis:** Real-time calculation of frequency shifts (±kHz) caused by 7.5 km/s satellite velocities.
-- **Advanced Link Budgeting:** Models Free-Space Path Loss (FSPL), Carrier-to-Noise Ratio (CNR), and Antenna Gain (dBi) based on aperture diameter and frequency.
-- **Atmospheric Attenuation:** Simplified ITU-R P.618 models for Rain Fade and Gaseous absorption (critical for Ka-band/V-band links).
-- **Polar Visualizer:** Radar-style Azimuth/Elevation plotting to visualize the satellite's path across the sky.
-
-### 📱 Full-Stack Mobile & AI Integration
-- **Flask-powered Mobile Client:** A cross-platform web interface optimized for iPhone and Android.
-- **HTML5 Geolocation:** Uses your phone's native GPS to run "over-the-shoulder" tracking and link analysis from your exact physical location.
-- **🤖 RAG-Enabled Mission Assistant:** Intelligent link analysis powered by **Azure OpenAI**, **Amazon Bedrock (Claude 3.5)**, or **Google Gemini (1.5 Pro)**. 
-- **📚 Grounded Knowledge Base:** Uses **Retrieval-Augmented Generation (RAG)** to "read" technical documents (like ITU-R standards) in the `knowledge_base/` folder. It provides engineering recommendations and flags "Mission Risks" based on actual satellite regulations.
+Both projects demonstrate core technical competencies for high-speed, low-latency satellite constellations like **Amazon Project Kuiper** and **SpaceX Starlink**.
 
 ---
 
-## ☁️ Multi-Cloud & RAG Support
-This project features a modular AI layer (`llm.py`) that utilizes the latest **Long-Context** windows and RAG architectures:
-- **Grounded Analysis:** The AI automatically scans `knowledge_base/*.txt` to provide context-aware responses.
-- **Provider Agnostic:** Switch between **Amazon Bedrock**, **Azure**, or **Google** via environment variables.
+## 📦 Projects
 
-## 🛠️ Tech Stack
-- **Languages:** Python 3.9+
-- **Orbital Propagation:** Skyfield, NumPy
-- **API/Networking:** Requests, Flask (REST API)
-- **Geocoding:** Geopy (Nominatim)
-- **Visualization:** Matplotlib
-- **Data Export:** JSON Telemetry Logging
+### 🛰️ [PyOrbit-Link](./PyOrbit-Link) — LEO Satellite Tracker & RF Link Budget Toolkit
+> `github.com/hoomanp/PyOrbit-Link`
 
----
+A real-time satellite tracking and RF engineering toolkit.
 
-## 📦 Installation
+- Live TLE ingestion from CelesTrak by NORAD ID
+- Orbit propagation via Skyfield (`EarthSatellite` / SGP4)
+- RF link budget: FSPL, CNR, Doppler shift, antenna gain, atmospheric attenuation
+- Polar sky-plot visualizer (Matplotlib)
+- Flask mobile client with HTML5 GPS and RAG-enabled AI mission analysis
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/hoomanp/PyOrbit-Link.git
-   cd PyOrbit-Link
-   ```
-
-2. **Install Dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Run the Desktop Advanced Demo:**
-   ```bash
-   python3 -m examples.advanced_features
-   ```
+**[→ View PyOrbit-Link README](./PyOrbit-Link/README.md)**
 
 ---
 
-## 📱 Mobile Client Setup
+### 🌐 [ConstellaSim](./ConstellaSim) — LEO Network Topology Simulator
+> `github.com/hoomanp/ConstellaSim`
 
-To use the mobile client with your phone's GPS:
+A discrete-event simulator for packet-level LEO constellation networking.
 
-1. **Start the Flask Server:**
-   ```bash
-   python3 mobile_client/app.py
-   ```
-2. **Access from Phone:**
-   Open your mobile browser and navigate to `http://<YOUR_LAPTOP_IP>:5000`.
-3. **Track:** Tap "Use My Location" to see live ISS telemetry relative to your position!
+- SimPy-based event engine with Dijkstra routing (NetworkX)
+- ISL and GSL link modelling with congestion, buffer overflow, and handover logic
+- End-to-end latency, packet loss, and hop count analytics
+- Flask mobile client with GPS-based simulation setup and RAG-enabled AI network analysis
+
+**[→ View ConstellaSim README](./ConstellaSim/README.md)**
 
 ---
 
-## 🔭 Technical Architecture
-The project follows a modular **Systems Integration** pattern:
-- `tracker.py`: Pure orbital mechanics and coordinate transformations.
-- `calculator.py`: Physics-based RF formulas and link budgeting logic.
-- `visualizer.py`: Data visualization layer.
-- `api.py` / `utils.py`: Data acquisition and geocoding services.
+## 🏗️ Repository Structure
+
+```
+LOS/
+├── PyOrbit-Link/               # Satellite tracker & RF toolkit (own git remote)
+│   ├── pyorbit_link/           # Core library modules
+│   │   ├── tracker.py          # Orbit propagation & AER computation
+│   │   ├── calculator.py       # RF link budget formulas
+│   │   ├── api.py              # CelesTrak TLE fetcher
+│   │   ├── visualizer.py       # Polar sky-plot renderer
+│   │   ├── utils.py            # ZIP/city geocoding
+│   │   └── llm.py              # RAG-enabled AI assistant
+│   ├── mobile_client/app.py    # Flask REST API + mobile web UI
+│   ├── examples/               # Runnable demos
+│   ├── knowledge_base/         # ITU-R standards docs for RAG
+│   └── requirements.txt
+│
+├── ConstellaSim/               # LEO network simulator (own git remote)
+│   ├── constellasim/           # Core library modules
+│   │   ├── engine.py           # Discrete-event simulation engine
+│   │   ├── node.py             # Satellite & GroundStation node classes
+│   │   ├── utils.py            # Geocoding utilities
+│   │   └── llm.py              # RAG-enabled AI network analyst
+│   ├── mobile_client/app.py    # Flask REST API + mobile web UI
+│   ├── examples/               # Runnable demos
+│   ├── knowledge_base/         # LEO networking standards docs for RAG
+│   └── requirements.txt
+│
+└── README.md                   # This file
+```
+
+---
+
+## 🚀 Quick Start
+
+Each project has its own `requirements.txt` and can be installed independently.
+
+**PyOrbit-Link:**
+```bash
+cd PyOrbit-Link
+pip install -r requirements.txt
+python3 -m examples.advanced_features
+```
+
+**ConstellaSim:**
+```bash
+cd ConstellaSim
+pip install -r requirements.txt
+python3 -m examples.multi_hop_demo
+```
+
+---
+
+## ☁️ Multi-Cloud AI Support
+
+Both projects share the same modular RAG architecture (`llm.py`). Switch providers via environment variable:
+
+| Project | Variable | Providers |
+|---|---|---|
+| PyOrbit-Link | `SAT_AI_PROVIDER` | `google` (default), `azure`, `amazon` |
+| ConstellaSim | `NETWORK_AI_PROVIDER` | `google` (default), `azure`, `amazon` |
 
 ---
 
 ## 📄 License
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License.
 
 ## 🤝 Contact
 **Hooman P.** - [GitHub](https://github.com/hoomanp)
