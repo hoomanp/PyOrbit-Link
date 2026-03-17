@@ -1,6 +1,9 @@
 from flask import Flask, render_template_string, jsonify, request
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import sys
 import os
+import logging
 import threading
 from datetime import datetime, timezone
 
@@ -13,7 +16,18 @@ from pyorbit_link.calculator import LinkCalculator
 from pyorbit_link.llm import MissionAI
 
 app = Flask(__name__)
+limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "30 per minute"])
 ai_assistant = MissionAI()
+
+@app.after_request
+def set_security_headers(response):
+    """Add browser-level security headers to every response."""
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+    )
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    return response
 
 # TLE data has a short validity window (~6 hours for ISS).
 # Cache the tracker and refresh it periodically to keep orbit predictions accurate.
@@ -46,6 +60,7 @@ def home():
     return render_template_string(HTML_TEMPLATE)
 
 @app.route('/api/track', methods=['POST'])
+@limiter.limit("30 per minute")
 def track_iss():
     """API Endpoint: Receives GPS coordinates, returns next pass."""
     # Security fix: validate all inputs before use.
@@ -87,8 +102,11 @@ def track_iss():
             "Analyze this satellite link budget. Is the signal too weak for a 2.4GHz WiFi link? Suggest improvements.",
             telemetry
         )
-    except Exception as e:
-        ai_analysis = f"AI Analysis Unavailable: {e}"
+    except Exception:
+        # Security: log full exception server-side; return generic message to avoid leaking
+        # API endpoint URLs, credentials, or internal state to the client.
+        app.logger.exception("AI analysis failed")
+        ai_analysis = "AI analysis temporarily unavailable."
 
     # Find next pass
     passes = tracker.find_events(lat, lon, alt_m=10.0, duration_days=1)

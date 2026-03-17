@@ -4,6 +4,7 @@ matplotlib
 requests
 geopy
 flask
+flask-limiter
 openai
 boto3
 google-generativeai

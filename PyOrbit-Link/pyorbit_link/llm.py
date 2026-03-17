@@ -1,12 +1,27 @@
 import os
+import re
 import json
 import glob
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
 
+logger = logging.getLogger(__name__)
+
 # Optimization: cap total KB content to prevent runaway token costs and memory use.
 _MAX_KB_CHARS = 50_000
+
+# Security: pattern to strip ASCII control characters and Unicode bidirectional
+# overrides that can be used for prompt injection.
+_CONTROL_CHARS_RE = re.compile(
+    r'[\x00-\x1f\x7f\u200b-\u200d\u202a-\u202e\u2066-\u2069]'
+)
+
+def _sanitize(text):
+    """Strip control characters and bidirectional overrides from any string."""
+    return _CONTROL_CHARS_RE.sub(' ', str(text)).strip()
+
 
 class MissionAI:
     """RAG-Enabled AI Assistant for Satellite Systems Engineering."""
@@ -15,8 +30,10 @@ class MissionAI:
         self.provider = provider or os.getenv("SAT_AI_PROVIDER", "google").lower()
         self.kb_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'knowledge_base'))
         # Security: assert kb_path stays within the project tree to prevent path traversal.
+        # Use if/raise instead of assert — assert is compiled away with python -O.
         _project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        assert self.kb_path.startswith(_project_root), "kb_path resolves outside project directory"
+        if not self.kb_path.startswith(_project_root):
+            raise ValueError(f"kb_path '{self.kb_path}' resolves outside project directory")
         # Optimization: load KB once at startup; re-reading every request wastes I/O and tokens.
         self._kb_cache = self._load_kb()
         # Optimization: build AI clients once to reuse HTTP sessions across requests.
@@ -60,11 +77,20 @@ class MissionAI:
             genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
             self._google_model = genai.GenerativeModel('gemini-1.5-flash')
 
+    def _sanitize_telemetry(self, data):
+        """Sanitize string values in telemetry dicts to prevent prompt injection."""
+        if isinstance(data, dict):
+            return {k: self._sanitize_telemetry(v) for k, v in data.items()}
+        if isinstance(data, str):
+            return _sanitize(data)
+        return data
+
     def get_analysis(self, user_prompt, telemetry_data):
         """Asks the AI to analyze data while GROUNDED in technical documentation."""
         kb_context = self._get_kb_context()
-        # Security: strip control characters from user_prompt to prevent prompt injection.
-        safe_prompt = user_prompt.replace('\n', ' ').replace('\r', ' ').strip()
+        # Security: strip all control characters (not just \n/\r) to prevent prompt injection.
+        safe_prompt = _sanitize(user_prompt)
+        safe_telemetry = self._sanitize_telemetry(telemetry_data)
 
         system_instructions = (
             "You are a Satellite Systems Engineer specializing in LEO constellations (e.g., Kuiper, Starlink).\n"
@@ -75,7 +101,7 @@ class MissionAI:
         full_prompt = (
             f"{system_instructions}\n\n"
             f"--- TECHNICAL STANDARDS CONTEXT ---\n{kb_context}\n"
-            f"--- CURRENT TELEMETRY ---\n{json.dumps(telemetry_data, indent=2)}\n\n"
+            f"--- CURRENT TELEMETRY ---\n{json.dumps(safe_telemetry, indent=2)}\n\n"
             f"USER REQUEST: {safe_prompt}\n"
             "Provide a highly detailed, grounded response."
         )

@@ -1,3 +1,4 @@
+import threading
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 
@@ -9,11 +10,14 @@ class LocationProvider:
         # Optimization: cache resolved locations to avoid redundant Nominatim API calls
         # and stay within the Nominatim ToS (1 request/second limit).
         self._cache = {}
+        # Thread safety: guard cache writes against concurrent Flask requests.
+        self._lock = threading.Lock()
 
     def get_lat_lon(self, query):
         """Resolves a query (ZIP, City, Address) to (Latitude, Longitude)."""
-        if query in self._cache:
-            return self._cache[query]
+        with self._lock:
+            if query in self._cache:
+                return self._cache[query]
         try:
             # Explicit timeout prevents the Flask worker from blocking indefinitely.
             location = self.geolocator.geocode(query, timeout=5)
@@ -21,7 +25,8 @@ class LocationProvider:
                 result = location.latitude, location.longitude, location.address
             else:
                 result = None, None, None
-            self._cache[query] = result
+            with self._lock:
+                self._cache[query] = result
             return result
         except GeocoderTimedOut:
             print("Error: Geocoding service timed out.")
