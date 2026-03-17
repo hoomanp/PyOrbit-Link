@@ -5,39 +5,78 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Optimization: cap total KB content to prevent runaway token costs and memory use.
+_MAX_KB_CHARS = 50_000
+
 class MissionAI:
     """RAG-Enabled AI Assistant for Satellite Systems Engineering."""
-    
+
     def __init__(self, provider=None):
         self.provider = provider or os.getenv("SAT_AI_PROVIDER", "google").lower()
-        # Optimization: normalize path to avoid traversal ambiguity with '..' components.
         self.kb_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'knowledge_base'))
+        # Security: assert kb_path stays within the project tree to prevent path traversal.
+        _project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        assert self.kb_path.startswith(_project_root), "kb_path resolves outside project directory"
+        # Optimization: load KB once at startup; re-reading every request wastes I/O and tokens.
+        self._kb_cache = self._load_kb()
+        # Optimization: build AI clients once to reuse HTTP sessions across requests.
+        self._azure_client = None
+        self._amazon_client = None
+        self._google_model = None
+        self._init_clients()
+
+    def _load_kb(self):
+        """Load and cache all knowledge base documents, capped at _MAX_KB_CHARS."""
+        kb_content = ""
+        for file_path in glob.glob(os.path.join(self.kb_path, "*.txt")):
+            # Security: resolve symlinks and verify each file stays within kb_path.
+            resolved = os.path.realpath(file_path)
+            if not resolved.startswith(os.path.realpath(self.kb_path)):
+                continue
+            with open(resolved, 'r') as f:
+                kb_content += f"\n--- Document: {os.path.basename(file_path)} ---\n"
+                kb_content += f.read() + "\n"
+            if len(kb_content) >= _MAX_KB_CHARS:
+                break
+        return kb_content[:_MAX_KB_CHARS]
 
     def _get_kb_context(self):
-        """Retrieves and consolidates all documents from the knowledge base."""
-        kb_content = ""
-        for file in glob.glob(os.path.join(self.kb_path, "*.txt")):
-            with open(file, 'r') as f:
-                kb_content += f"\n--- Document: {os.path.basename(file)} ---\n"
-                kb_content += f.read() + "\n"
-        return kb_content
+        return self._kb_cache
+
+    def _init_clients(self):
+        """Initialize AI clients once at startup for connection reuse."""
+        if self.provider == "azure":
+            from openai import AzureOpenAI
+            self._azure_client = AzureOpenAI(
+                api_key=os.getenv("AZURE_OPENAI_KEY"),
+                api_version="2024-02-15-preview",
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+            )
+        elif self.provider == "amazon":
+            import boto3
+            self._amazon_client = boto3.client("bedrock-runtime", region_name="us-east-1")
+        elif self.provider == "google":
+            import google.generativeai as genai
+            genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+            self._google_model = genai.GenerativeModel('gemini-1.5-flash')
 
     def get_analysis(self, user_prompt, telemetry_data):
         """Asks the AI to analyze data while GROUNDED in technical documentation."""
         kb_context = self._get_kb_context()
-        
-        # Construct the "Grounded" prompt with the latest context features
+        # Security: strip control characters from user_prompt to prevent prompt injection.
+        safe_prompt = user_prompt.replace('\n', ' ').replace('\r', ' ').strip()
+
         system_instructions = (
             "You are a Satellite Systems Engineer specializing in LEO constellations (e.g., Kuiper, Starlink).\n"
             "Use the provided Technical Standards context to justify your analysis.\n"
             "If the telemetry data violates any standard (e.g., elevation too low), highlight it as a 'Mission Risk'."
         )
-        
+
         full_prompt = (
             f"{system_instructions}\n\n"
             f"--- TECHNICAL STANDARDS CONTEXT ---\n{kb_context}\n"
             f"--- CURRENT TELEMETRY ---\n{json.dumps(telemetry_data, indent=2)}\n\n"
-            f"USER REQUEST: {user_prompt}\n"
+            f"USER REQUEST: {safe_prompt}\n"
             "Provide a highly detailed, grounded response."
         )
 
@@ -51,34 +90,21 @@ class MissionAI:
             return "AI Provider not configured correctly."
 
     def _call_azure(self, prompt):
-        from openai import AzureOpenAI
-        client = AzureOpenAI(
-            api_key=os.getenv("AZURE_OPENAI_KEY"),
-            api_version="2024-02-15-preview",
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-        )
-        response = client.chat.completions.create(
+        response = self._azure_client.chat.completions.create(
             model=os.getenv("AZURE_DEPLOYMENT_NAME", "gpt-4-turbo"),
             messages=[{"role": "user", "content": prompt}]
         )
         return response.choices[0].message.content
 
     def _call_amazon(self, prompt):
-        import boto3
-        client = boto3.client("bedrock-runtime", region_name="us-east-1")
-        # Using Claude 3 Sonnet (Large Context supported in Bedrock)
         body = json.dumps({
             "anthropic_version": "bedrock-2023-05-31",
             "max_tokens": 2048,
             "messages": [{"role": "user", "content": prompt}]
         })
-        response = client.invoke_model(body=body, modelId="anthropic.claude-3-sonnet-20240229-v1:0")
+        response = self._amazon_client.invoke_model(body=body, modelId="anthropic.claude-3-sonnet-20240229-v1:0")
         return json.loads(response.get("body").read())["content"][0]["text"]
 
     def _call_google(self, prompt):
-        import google.generativeai as genai
-        genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-        # Using Gemini 1.5 Flash (1M token context window)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(prompt)
+        response = self._google_model.generate_content(prompt)
         return response.text

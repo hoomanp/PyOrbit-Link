@@ -1,7 +1,8 @@
 from flask import Flask, render_template_string, jsonify, request
 import sys
 import os
-from datetime import datetime
+import threading
+from datetime import datetime, timezone
 
 # Add the parent directory to sys.path to import pyorbit_link
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -14,13 +15,30 @@ from pyorbit_link.llm import MissionAI
 app = Flask(__name__)
 ai_assistant = MissionAI()
 
-# Cache TLE data and tracker (fetch/build once per server start for efficiency).
-# Optimization: creating SatTracker per-request was wasteful; reuse a single instance.
-TLE_CACHE = CelesTrakAPI.get_tle_by_norad_id(25544)  # ISS (NORAD 25544)
+# TLE data has a short validity window (~6 hours for ISS).
+# Cache the tracker and refresh it periodically to keep orbit predictions accurate.
+_TLE_TTL_SECONDS = 6 * 3600
+_tle_lock = threading.Lock()
+_tle_fetched_at = None
+TLE_CACHE = None
 _tracker = None
-if TLE_CACHE:
-    _name, _l1, _l2 = TLE_CACHE
-    _tracker = SatTracker(_l1, _l2, _name)
+
+def _refresh_tle_if_stale():
+    """Re-fetch TLE data when it is older than _TLE_TTL_SECONDS."""
+    global TLE_CACHE, _tracker, _tle_fetched_at
+    with _tle_lock:
+        now = datetime.now(timezone.utc)
+        if _tle_fetched_at and (now - _tle_fetched_at).total_seconds() < _TLE_TTL_SECONDS:
+            return  # still fresh
+        fresh = CelesTrakAPI.get_tle_by_norad_id(25544)
+        if fresh:
+            TLE_CACHE = fresh
+            _name, _l1, _l2 = fresh
+            _tracker = SatTracker(_l1, _l2, _name)
+            _tle_fetched_at = now
+
+# Initial fetch at startup.
+_refresh_tle_if_stale()
 
 @app.route('/')
 def home():
@@ -42,6 +60,7 @@ def track_iss():
     if not (-90 <= lat <= 90) or not (-180 <= lon <= 180):
         return jsonify({"error": "Coordinates out of range"}), 400
 
+    _refresh_tle_if_stale()
     if not _tracker:
         return jsonify({"error": "Could not fetch TLE data."}), 500
 
@@ -187,5 +206,7 @@ HTML_TEMPLATE = """
 
 if __name__ == '__main__':
     # Security fix: debug=True exposes an interactive debugger; use env var to control it.
+    # FLASK_HOST defaults to 0.0.0.0 for mobile access; set to 127.0.0.1 for local-only use.
     debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
-    app.run(host='0.0.0.0', port=5000, debug=debug)
+    host = os.getenv("FLASK_HOST", "0.0.0.0")
+    app.run(host=host, port=5000, debug=debug)

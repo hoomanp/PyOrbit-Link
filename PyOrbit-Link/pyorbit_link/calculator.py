@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 class LinkCalculator:
@@ -8,6 +9,11 @@ class LinkCalculator:
     @staticmethod
     def calculate_fspl(frequency_hz, distance_km):
         """Free-Space Path Loss (FSPL) in dB."""
+        # Bug fix: log10(0) returns -inf and log10(negative) returns NaN silently.
+        if frequency_hz <= 0:
+            raise ValueError(f"frequency_hz must be positive, got {frequency_hz}")
+        if distance_km <= 0:
+            raise ValueError(f"distance_km must be positive, got {distance_km}")
         distance_m = distance_km * 1000
         fspl = 20 * np.log10(distance_m) + 20 * np.log10(frequency_hz) + 20 * np.log10(4 * np.pi / LinkCalculator.SPEED_OF_LIGHT)
         return fspl
@@ -21,6 +27,10 @@ class LinkCalculator:
     @staticmethod
     def calculate_antenna_gain(diameter_m, frequency_hz, efficiency=0.55):
         """Calculate antenna gain in dBi based on aperture diameter."""
+        if diameter_m <= 0:
+            raise ValueError(f"diameter_m must be positive, got {diameter_m}")
+        if frequency_hz <= 0:
+            raise ValueError(f"frequency_hz must be positive, got {frequency_hz}")
         wavelength = LinkCalculator.SPEED_OF_LIGHT / frequency_hz
         gain_linear = efficiency * (np.pi * diameter_m / wavelength)**2
         return 10 * np.log10(gain_linear)
@@ -56,6 +66,11 @@ class LinkCalculator:
     def export_results_json(results_dict, filename="link_results.json"):
         """Export calculation results for downstream analysis."""
         import json
-        with open(filename, 'w') as f:
+        # Security: validate output path to prevent arbitrary file write via path traversal.
+        safe_path = os.path.realpath(filename)
+        allowed_dir = os.path.realpath(os.getcwd())
+        if not safe_path.startswith(allowed_dir):
+            raise ValueError(f"Output path '{filename}' resolves outside the working directory")
+        with open(safe_path, 'w') as f:
             json.dump(results_dict, f, indent=4)
-        print(f"Results exported to {filename}")
+        print(f"Results exported to {safe_path}")
