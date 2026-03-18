@@ -1,4 +1,8 @@
+import os
+import logging
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 class LinkCalculator:
     """Calculates RF Link Budget and Doppler shift for Satellite Communications."""
@@ -8,6 +12,11 @@ class LinkCalculator:
     @staticmethod
     def calculate_fspl(frequency_hz, distance_km):
         """Free-Space Path Loss (FSPL) in dB."""
+        # Bug fix: log10(0) returns -inf and log10(negative) returns NaN silently.
+        if frequency_hz <= 0:
+            raise ValueError(f"frequency_hz must be positive, got {frequency_hz}")
+        if distance_km <= 0:
+            raise ValueError(f"distance_km must be positive, got {distance_km}")
         distance_m = distance_km * 1000
         fspl = 20 * np.log10(distance_m) + 20 * np.log10(frequency_hz) + 20 * np.log10(4 * np.pi / LinkCalculator.SPEED_OF_LIGHT)
         return fspl
@@ -21,6 +30,10 @@ class LinkCalculator:
     @staticmethod
     def calculate_antenna_gain(diameter_m, frequency_hz, efficiency=0.55):
         """Calculate antenna gain in dBi based on aperture diameter."""
+        if diameter_m <= 0:
+            raise ValueError(f"diameter_m must be positive, got {diameter_m}")
+        if frequency_hz <= 0:
+            raise ValueError(f"frequency_hz must be positive, got {frequency_hz}")
         wavelength = LinkCalculator.SPEED_OF_LIGHT / frequency_hz
         gain_linear = efficiency * (np.pi * diameter_m / wavelength)**2
         return 10 * np.log10(gain_linear)
@@ -28,6 +41,11 @@ class LinkCalculator:
     @staticmethod
     def calculate_atmospheric_loss(elevation_deg, frequency_ghz, rain_rate_mm_hr=0):
         """Simple model for atmospheric attenuation based on elevation and rain."""
+        # Bug fix: clamp elevation to at least 1 degree to avoid division by zero
+        # (sin(0) = 0 causes ZeroDivisionError / inf at horizon).
+        if elevation_deg < 1.0:
+            logger.warning("Elevation %.2f° is below 1° — clamping to 1° for atmospheric loss calculation", elevation_deg)
+            elevation_deg = 1.0
         # Baseline loss increases as elevation drops (more atmosphere to travel through)
         baseline_loss = 0.5 / np.sin(np.radians(elevation_deg))
         
@@ -42,14 +60,24 @@ class LinkCalculator:
     def total_link_budget(tx_power_dbw, tx_gain_dbi, rx_gain_dbi, path_loss_db, noise_temp_k, bandwidth_hz, atmospheric_loss_db=0):
         """Simple Link Budget calculation (CNR - Carrier to Noise Ratio)."""
         BOLTZMANN_CONSTANT_DB = -228.6  # dB(W/K/Hz)
-        
+
         rx_power_dbw = tx_power_dbw + tx_gain_dbi + rx_gain_dbi - path_loss_db - atmospheric_loss_db
         noise_power_dbw = BOLTZMANN_CONSTANT_DB + 10 * np.log10(noise_temp_k) + 10 * np.log10(bandwidth_hz)
-        
+        # Bug fix: cnr_db was never computed or returned; function always returned None.
+        cnr_db = rx_power_dbw - noise_power_dbw
+        return cnr_db
+
     @staticmethod
     def export_results_json(results_dict, filename="link_results.json"):
         """Export calculation results for downstream analysis."""
         import json
-        with open(filename, 'w') as f:
+        # Security: validate output path to prevent arbitrary file write via path traversal.
+        safe_path = os.path.realpath(filename)
+        allowed_dir = os.path.realpath(os.getcwd())
+        # C-3: append os.sep to prevent startswith bypass where a sibling directory
+        # name begins with the same prefix (e.g., /app/data_evil starts with /app/data).
+        if not safe_path.startswith(allowed_dir + os.sep):
+            raise ValueError(f"Output path '{filename}' resolves outside the working directory")
+        with open(safe_path, 'w') as f:
             json.dump(results_dict, f, indent=4)
-        print(f"Results exported to {filename}")
+        print(f"Results exported to {safe_path}")
