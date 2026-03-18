@@ -1,25 +1,39 @@
+import re
 import threading
+import logging
+from collections import OrderedDict
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
+
+logger = logging.getLogger(__name__)
+
+# V-08: allowlist pattern — accept only printable letters, digits, spaces, commas,
+# hyphens, periods, and parentheses (covers city names, ZIP codes, and addresses).
+_LOCATION_RE = re.compile(r'^[\w\s,.\-()+]+$', re.UNICODE)
+_CACHE_MAX = 1_000  # V-02: cap to prevent unbounded memory growth
+
 
 class LocationProvider:
     """Utility to convert ZIP codes and addresses to Lat/Lon for satellite tracking."""
 
     def __init__(self, user_agent="PyOrbitLink"):
         self.geolocator = Nominatim(user_agent=user_agent)
-        # Optimization: cache resolved locations to avoid redundant Nominatim API calls
-        # and stay within the Nominatim ToS (1 request/second limit).
-        self._cache = {}
-        # Thread safety: guard cache writes against concurrent Flask requests.
+        # V-02: bounded LRU-style cache using OrderedDict (evicts oldest on overflow).
+        self._cache: OrderedDict = OrderedDict()
         self._lock = threading.Lock()
 
     def get_lat_lon(self, query):
         """Resolves a query (ZIP, City, Address) to (Latitude, Longitude)."""
+        # V-08: reject queries that don't match the location allowlist.
+        if not query or not _LOCATION_RE.match(query.strip()):
+            logger.warning("Rejected invalid location query")
+            return None, None, None
+
         with self._lock:
             if query in self._cache:
+                self._cache.move_to_end(query)
                 return self._cache[query]
         try:
-            # Explicit timeout prevents the Flask worker from blocking indefinitely.
             location = self.geolocator.geocode(query, timeout=5)
             if location:
                 result = location.latitude, location.longitude, location.address
@@ -27,10 +41,15 @@ class LocationProvider:
                 result = None, None, None
             with self._lock:
                 self._cache[query] = result
+                self._cache.move_to_end(query)
+                # V-02: evict oldest entry when cache exceeds max size.
+                if len(self._cache) > _CACHE_MAX:
+                    self._cache.popitem(last=False)
             return result
         except GeocoderTimedOut:
-            print("Error: Geocoding service timed out.")
+            # V-07: use logger instead of print to avoid leaking detail to shared stdout.
+            logger.warning("Geocoding timed out for query")
             return None, None, None
-        except Exception as e:
-            print(f"Error resolving location: {e}")
+        except Exception:
+            logger.exception("Geocoding error")
             return None, None, None

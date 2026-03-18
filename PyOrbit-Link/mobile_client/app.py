@@ -1,8 +1,9 @@
-from flask import Flask, render_template_string, jsonify, request
+from flask import Flask, render_template_string, jsonify, request, g
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import sys
 import os
+import secrets
 import logging
 import threading
 from datetime import datetime, timezone
@@ -19,11 +20,18 @@ app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "30 per minute"])
 ai_assistant = MissionAI()
 
+@app.before_request
+def generate_csp_nonce():
+    """Generate a per-request nonce for use in CSP and script tags."""
+    g.csp_nonce = secrets.token_urlsafe(16)
+
 @app.after_request
 def set_security_headers(response):
     """Add browser-level security headers to every response."""
+    nonce = getattr(g, 'csp_nonce', '')
+    # V-06: use nonce-based CSP instead of unsafe-inline.
     response.headers['Content-Security-Policy'] = (
-        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+        f"default-src 'self'; script-src 'self' 'nonce-{nonce}'; style-src 'self' 'unsafe-inline'"
     )
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
@@ -57,7 +65,7 @@ _refresh_tle_if_stale()
 @app.route('/')
 def home():
     """Renders the Mobile UI."""
-    return render_template_string(HTML_TEMPLATE)
+    return render_template_string(HTML_TEMPLATE, nonce=g.csp_nonce)
 
 @app.route('/api/track', methods=['POST'])
 @limiter.limit("30 per minute")
@@ -168,7 +176,7 @@ HTML_TEMPLATE = """
         <div class="data-row"><span class="label">Set Time</span><span class="value" id="pass_set">-</span></div>
     </div>
 
-    <script>
+    <script nonce="{{ nonce }}">
         function getLocation() {
             const status = document.getElementById('status');
             if (!navigator.geolocation) {
