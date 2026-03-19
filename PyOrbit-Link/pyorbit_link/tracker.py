@@ -10,6 +10,13 @@ class SatTracker:
 
     def find_events(self, lat, lon, alt_m, duration_days=1):
         """Find when the satellite is above the horizon for a ground observer."""
+        # L-4: validate inputs at the library boundary to catch bad values from any caller.
+        if not (-90 <= lat <= 90):
+            raise ValueError(f"lat must be in [-90, 90], got {lat}")
+        if not (-180 <= lon <= 180):
+            raise ValueError(f"lon must be in [-180, 180], got {lon}")
+        if alt_m < -500:
+            raise ValueError(f"alt_m is unreasonably low: {alt_m}")
         observer = Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=alt_m)
         t0 = self.ts.now()
         t1 = self.ts.from_datetime(t0.utc_datetime() + timedelta(days=duration_days))
@@ -29,6 +36,12 @@ class SatTracker:
 
     def get_aer(self, lat, lon, alt_m, time_obj=None):
         """Returns Azimuth, Elevation, and Range (Distance) from a ground observer."""
+        if not (-90 <= lat <= 90):
+            raise ValueError(f"lat must be in [-90, 90], got {lat}")
+        if not (-180 <= lon <= 180):
+            raise ValueError(f"lon must be in [-180, 180], got {lon}")
+        if alt_m < -500:
+            raise ValueError(f"alt_m is unreasonably low: {alt_m}")
         observer = Topos(latitude_degrees=lat, longitude_degrees=lon, elevation_m=alt_m)
         if time_obj is None:
             t = self.ts.now()

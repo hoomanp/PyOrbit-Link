@@ -1,5 +1,8 @@
 import os
+import logging
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 class LinkCalculator:
     """Calculates RF Link Budget and Doppler shift for Satellite Communications."""
@@ -40,7 +43,9 @@ class LinkCalculator:
         """Simple model for atmospheric attenuation based on elevation and rain."""
         # Bug fix: clamp elevation to at least 1 degree to avoid division by zero
         # (sin(0) = 0 causes ZeroDivisionError / inf at horizon).
-        elevation_deg = max(elevation_deg, 1.0)
+        if elevation_deg < 1.0:
+            logger.warning("Elevation %.2f° is below 1° — clamping to 1° for atmospheric loss calculation", elevation_deg)
+            elevation_deg = 1.0
         # Baseline loss increases as elevation drops (more atmosphere to travel through)
         baseline_loss = 0.5 / np.sin(np.radians(elevation_deg))
         
@@ -69,7 +74,9 @@ class LinkCalculator:
         # Security: validate output path to prevent arbitrary file write via path traversal.
         safe_path = os.path.realpath(filename)
         allowed_dir = os.path.realpath(os.getcwd())
-        if not safe_path.startswith(allowed_dir):
+        # C-3: append os.sep to prevent startswith bypass where a sibling directory
+        # name begins with the same prefix (e.g., /app/data_evil starts with /app/data).
+        if not safe_path.startswith(allowed_dir + os.sep):
             raise ValueError(f"Output path '{filename}' resolves outside the working directory")
         with open(safe_path, 'w') as f:
             json.dump(results_dict, f, indent=4)

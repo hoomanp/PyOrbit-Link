@@ -28,6 +28,9 @@ class CelesTrakAPI:
     @staticmethod
     def get_tle_by_norad_id(norad_id):
         """Fetch TLE for a specific NORAD ID (e.g., 25544 for ISS)."""
+        # C-1: enforce integer type and valid NORAD catalog range before network call.
+        if not isinstance(norad_id, int) or not (1 <= norad_id <= 99999):
+            raise ValueError(f"Invalid NORAD ID: {norad_id!r} — must be an integer between 1 and 99999")
         params = {'CATNR': norad_id, 'FORMAT': 'TLE'}
         try:
             response = requests.get(CelesTrakAPI.BASE_URL, params=params, timeout=10)

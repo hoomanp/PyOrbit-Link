@@ -12,10 +12,11 @@ logger = logging.getLogger(__name__)
 # Optimization: cap total KB content to prevent runaway token costs and memory use.
 _MAX_KB_CHARS = 50_000
 
-# Security: pattern to strip ASCII control characters and Unicode bidirectional
-# overrides that can be used for prompt injection.
+# Security: pattern to strip ASCII control characters, Unicode bidirectional overrides,
+# line/paragraph separators, soft hyphen, BOM, and LRM/RLM marks — all usable for
+# prompt injection or token-boundary manipulation.
 _CONTROL_CHARS_RE = re.compile(
-    r'[\x00-\x1f\x7f\u200b-\u200d\u202a-\u202e\u2066-\u2069]'
+    r'[\x00-\x1f\x7f\u00ad\u200b-\u200f\u202a-\u202e\u2028\u2029\u2066-\u2069\ufeff]'
 )
 
 def _sanitize(text):
@@ -32,7 +33,8 @@ class MissionAI:
         # Security: assert kb_path stays within the project tree to prevent path traversal.
         # Use if/raise instead of assert — assert is compiled away with python -O.
         _project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        if not self.kb_path.startswith(_project_root):
+        # M-5: append os.sep to prevent the same prefix-bypass as the calculator path check.
+        if not self.kb_path.startswith(_project_root + os.sep):
             raise ValueError(f"kb_path '{self.kb_path}' resolves outside project directory")
         # Optimization: load KB once at startup; re-reading every request wastes I/O and tokens.
         self._kb_cache = self._load_kb()
@@ -52,7 +54,9 @@ class MissionAI:
                 continue
             with open(resolved, 'r') as f:
                 kb_content += f"\n--- Document: {os.path.basename(file_path)} ---\n"
-                kb_content += f.read() + "\n"
+                # H-1: sanitize KB file content to prevent prompt injection via
+                # a compromised or maliciously crafted knowledge base file.
+                kb_content += _sanitize(f.read()) + "\n"
             if len(kb_content) >= _MAX_KB_CHARS:
                 break
         return kb_content[:_MAX_KB_CHARS]
@@ -75,8 +79,15 @@ class MissionAI:
                 azure_endpoint=endpoint
             )
         elif self.provider == "amazon":
+            # H-2: validate AWS credentials at boot — boto3.client() succeeds even without
+            # credentials; the failure would otherwise surface silently mid-request.
             import boto3
-            self._amazon_client = boto3.client("bedrock-runtime", region_name="us-east-1")
+            region = os.getenv("AWS_REGION", "us-east-1")
+            try:
+                boto3.client("sts", region_name=region).get_caller_identity()
+            except Exception as exc:
+                raise RuntimeError("AWS credentials are not configured or invalid for amazon provider") from exc
+            self._amazon_client = boto3.client("bedrock-runtime", region_name=region)
         elif self.provider == "google":
             key = os.getenv("GOOGLE_API_KEY")
             if not key:
@@ -142,3 +153,149 @@ class MissionAI:
     def _call_google(self, prompt):
         response = self._google_model.generate_content(prompt)
         return response.text
+
+    # --- Feature 1: Streaming ---
+
+    def get_analysis_stream(self, user_prompt, telemetry_data):
+        """Yields token chunks for streaming AI analysis via SSE."""
+        kb_context = self._get_kb_context()
+        safe_prompt = _sanitize(user_prompt)
+        safe_telemetry = self._sanitize_telemetry(telemetry_data)
+
+        system_instructions = (
+            "You are a Satellite Systems Engineer specializing in LEO constellations.\n"
+            "Use the provided Technical Standards context to justify your analysis.\n"
+            "If the telemetry data violates any standard, highlight it as a 'Mission Risk'."
+        )
+        full_prompt = (
+            f"{system_instructions}\n\n"
+            f"--- TECHNICAL STANDARDS CONTEXT ---\n{kb_context}\n"
+            f"--- CURRENT TELEMETRY ---\n{json.dumps(safe_telemetry, indent=2)}\n\n"
+            f"USER REQUEST: {safe_prompt}\n"
+            "Provide a highly detailed, grounded response."
+        )
+
+        if self.provider == "azure":
+            yield from self._stream_azure(full_prompt)
+        elif self.provider == "amazon":
+            yield from self._stream_amazon(full_prompt)
+        elif self.provider == "google":
+            yield from self._stream_google(full_prompt)
+
+    def _stream_google(self, prompt):
+        response = self._google_model.generate_content(prompt, stream=True)
+        for chunk in response:
+            if chunk.text:
+                yield chunk.text
+
+    def _stream_azure(self, prompt):
+        stream = self._azure_client.chat.completions.create(
+            model=os.getenv("AZURE_DEPLOYMENT_NAME", "gpt-4-turbo"),
+            messages=[{"role": "user", "content": prompt}],
+            stream=True,
+        )
+        for chunk in stream:
+            if chunk.choices and chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content
+
+    def _stream_amazon(self, prompt):
+        body = json.dumps({
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 2048,
+            "messages": [{"role": "user", "content": prompt}],
+        })
+        response = self._amazon_client.invoke_model_with_response_stream(
+            body=body, modelId="anthropic.claude-3-sonnet-20240229-v1:0"
+        )
+        for event in response["body"]:
+            chunk = json.loads(event["chunk"]["bytes"])
+            if chunk.get("type") == "content_block_delta":
+                yield chunk.get("delta", {}).get("text", "")
+
+    # --- Feature 2: Multi-Turn Chat ---
+
+    def chat(self, messages):
+        """Multi-turn conversation. messages is a list of {role, content} dicts."""
+        if self.provider == "azure":
+            return self._chat_azure(messages)
+        elif self.provider == "amazon":
+            return self._chat_amazon(messages)
+        elif self.provider == "google":
+            return self._chat_google(messages)
+        else:
+            return "AI Provider not configured correctly."
+
+    def _chat_azure(self, messages):
+        response = self._azure_client.chat.completions.create(
+            model=os.getenv("AZURE_DEPLOYMENT_NAME", "gpt-4-turbo"),
+            messages=messages,
+        )
+        return response.choices[0].message.content
+
+    def _chat_amazon(self, messages):
+        system_parts = [m["content"] for m in messages if m["role"] == "system"]
+        user_msgs = [m for m in messages if m["role"] != "system"]
+        body_dict = {
+            "anthropic_version": "bedrock-2023-05-31",
+            "max_tokens": 2048,
+            "messages": user_msgs,
+        }
+        if system_parts:
+            body_dict["system"] = " ".join(system_parts)
+        body = json.dumps(body_dict)
+        response = self._amazon_client.invoke_model(
+            body=body, modelId="anthropic.claude-3-sonnet-20240229-v1:0"
+        )
+        return json.loads(response.get("body").read())["content"][0]["text"]
+
+    def _chat_google(self, messages):
+        """Convert OpenAI-format messages to Gemini chat format."""
+        system_content = ""
+        gemini_history = []
+        for m in messages:
+            if m["role"] == "system":
+                system_content += m["content"] + "\n"
+            elif m["role"] == "user":
+                content = (system_content + m["content"]) if system_content else m["content"]
+                system_content = ""
+                gemini_history.append({"role": "user", "parts": [content]})
+            elif m["role"] == "assistant":
+                gemini_history.append({"role": "model", "parts": [m["content"]]})
+
+        if not gemini_history:
+            return "No messages provided."
+
+        last_msg = gemini_history[-1]["parts"][0]
+        history = gemini_history[:-1]
+        chat_session = self._google_model.start_chat(history=history)
+        return chat_session.send_message(last_msg).text
+
+    # --- Feature 5: Mission Briefing ---
+
+    def generate_briefing(self, data):
+        """Generate a structured Markdown mission briefing report."""
+        kb_context = self._get_kb_context()
+        safe_data = self._sanitize_telemetry(data)
+
+        system_instructions = (
+            "You are a Satellite Systems Engineer. Generate a structured mission briefing "
+            "in GitHub-Flavored Markdown with tables and headers. Include these sections:\n"
+            "# Mission Overview\n# Current Telemetry\n# Link Budget Assessment\n"
+            "# Next Pass Schedule\n# Recommendations\n"
+            "Use the technical standards context to ground your assessment."
+        )
+        full_prompt = (
+            f"{system_instructions}\n\n"
+            f"--- TECHNICAL STANDARDS CONTEXT ---\n{kb_context}\n"
+            f"--- MISSION DATA ---\n{json.dumps(safe_data, indent=2)}\n\n"
+            "Generate the complete mission briefing report in Markdown format."
+        )
+
+        if self.provider == "azure":
+            return self._call_azure(full_prompt)
+        elif self.provider == "amazon":
+            return self._call_amazon(full_prompt)
+        elif self.provider == "google":
+            return self._call_google(full_prompt)
+        else:
+            return "# Mission Briefing\n\nAI Provider not configured correctly."

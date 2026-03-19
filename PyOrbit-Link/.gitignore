@@ -8,6 +8,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.Python
 *.egg-info/
 dist/
 build/
@@ -17,18 +18,11 @@ build/
 venv/
 env/
 
-# IDE / OS
+# IDE
 .idea/
 .vscode/
 *.swp
+
+# OS
 .DS_Store
 Thumbs.db
-
-# Ephemeris data (large binary, auto-downloaded at runtime)
-*.bsp
-
-# Claude Code internal state
-.claude/
-
-# Nested duplicate directories
-PyOrbit-Link/PyOrbit-Link/

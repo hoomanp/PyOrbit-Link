@@ -9,7 +9,9 @@ logger = logging.getLogger(__name__)
 
 # V-08: allowlist pattern — accept only printable letters, digits, spaces, commas,
 # hyphens, periods, and parentheses (covers city names, ZIP codes, and addresses).
-_LOCATION_RE = re.compile(r'^[\w\s,.\-()+]+$', re.UNICODE)
+# M-2: removed '+' — not valid in city/address names; its URL-encoding semantics
+# widen the attack surface unnecessarily.
+_LOCATION_RE = re.compile(r'^[\w\s,.\-()]+$', re.UNICODE)
 _CACHE_MAX = 1_000  # V-02: cap to prevent unbounded memory growth
 
 
