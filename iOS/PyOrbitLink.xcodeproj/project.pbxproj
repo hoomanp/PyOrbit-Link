@@ -1,0 +1,490 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA000000000000000000001 /* PyOrbitLinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000001 /* PyOrbitLinkApp.swift */; };
+		AA000000000000000000002 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000002 /* AppConfig.swift */; };
+		AA000000000000000000003 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000003 /* ContentView.swift */; };
+		AA000000000000000000004 /* Telemetry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000004 /* Telemetry.swift */; };
+		AA000000000000000000005 /* SignalReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000005 /* SignalReading.swift */; };
+		AA000000000000000000006 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000006 /* ChatMessage.swift */; };
+		AA000000000000000000007 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000007 /* Alert.swift */; };
+		AA000000000000000000008 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000008 /* APIClient.swift */; };
+		AA000000000000000000009 /* SSEStreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000009 /* SSEStreamClient.swift */; };
+		AA000000000000000000010 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000010 /* LocationService.swift */; };
+		AA000000000000000000011 /* SignalMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000011 /* SignalMonitorService.swift */; };
+		AA000000000000000000012 /* LiveTrackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000012 /* LiveTrackViewModel.swift */; };
+		AA000000000000000000013 /* SignalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000013 /* SignalViewModel.swift */; };
+		AA000000000000000000014 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000014 /* ChatViewModel.swift */; };
+		AA000000000000000000015 /* PlannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000015 /* PlannerViewModel.swift */; };
+		AA000000000000000000016 /* AlertsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000016 /* AlertsViewModel.swift */; };
+		AA000000000000000000017 /* AERChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000017 /* AERChart.swift */; };
+		AA000000000000000000018 /* SignalChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000018 /* SignalChart.swift */; };
+		AA000000000000000000019 /* LinkBudgetChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000019 /* LinkBudgetChart.swift */; };
+		AA000000000000000000020 /* SatelliteMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000020 /* SatelliteMapView.swift */; };
+		AA000000000000000000021 /* SignalGauge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000021 /* SignalGauge.swift */; };
+		AA000000000000000000022 /* StreamingText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000022 /* StreamingText.swift */; };
+		AA000000000000000000023 /* LiveTrackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000023 /* LiveTrackView.swift */; };
+		AA000000000000000000024 /* SignalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000024 /* SignalView.swift */; };
+		AA000000000000000000025 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000025 /* ChatView.swift */; };
+		AA000000000000000000026 /* PlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000026 /* PlannerView.swift */; };
+		AA000000000000000000027 /* AlertsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000027 /* AlertsView.swift */; };
+		AA000000000000000000028 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB000000000000000000028 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AB000000000000000000001 /* PyOrbitLinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PyOrbitLinkApp.swift; path = PyOrbitLink/PyOrbitLinkApp.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000002 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = PyOrbitLink/AppConfig.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000003 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = PyOrbitLink/ContentView.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000004 /* Telemetry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Telemetry.swift; path = PyOrbitLink/Models/Telemetry.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000005 /* SignalReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalReading.swift; path = PyOrbitLink/Models/SignalReading.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000006 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatMessage.swift; path = PyOrbitLink/Models/ChatMessage.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000007 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Alert.swift; path = PyOrbitLink/Models/Alert.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000008 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = APIClient.swift; path = PyOrbitLink/Services/APIClient.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000009 /* SSEStreamClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SSEStreamClient.swift; path = PyOrbitLink/Services/SSEStreamClient.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000010 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LocationService.swift; path = PyOrbitLink/Services/LocationService.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000011 /* SignalMonitorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalMonitorService.swift; path = PyOrbitLink/Services/SignalMonitorService.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000012 /* LiveTrackViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveTrackViewModel.swift; path = PyOrbitLink/ViewModels/LiveTrackViewModel.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000013 /* SignalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalViewModel.swift; path = PyOrbitLink/ViewModels/SignalViewModel.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000014 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatViewModel.swift; path = PyOrbitLink/ViewModels/ChatViewModel.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000015 /* PlannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlannerViewModel.swift; path = PyOrbitLink/ViewModels/PlannerViewModel.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000016 /* AlertsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AlertsViewModel.swift; path = PyOrbitLink/ViewModels/AlertsViewModel.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000017 /* AERChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AERChart.swift; path = PyOrbitLink/Charts/AERChart.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000018 /* SignalChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalChart.swift; path = PyOrbitLink/Charts/SignalChart.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000019 /* LinkBudgetChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LinkBudgetChart.swift; path = PyOrbitLink/Charts/LinkBudgetChart.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000020 /* SatelliteMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SatelliteMapView.swift; path = PyOrbitLink/Components/SatelliteMapView.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000021 /* SignalGauge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalGauge.swift; path = PyOrbitLink/Components/SignalGauge.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000022 /* StreamingText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreamingText.swift; path = PyOrbitLink/Components/StreamingText.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000023 /* LiveTrackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveTrackView.swift; path = PyOrbitLink/Views/LiveTrackView.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000024 /* SignalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalView.swift; path = PyOrbitLink/Views/SignalView.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000025 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatView.swift; path = PyOrbitLink/Views/ChatView.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000026 /* PlannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlannerView.swift; path = PyOrbitLink/Views/PlannerView.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000027 /* AlertsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AlertsView.swift; path = PyOrbitLink/Views/AlertsView.swift; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000028 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = PyOrbitLink/Resources/Assets.xcassets; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000029 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = PyOrbitLink/Resources/Info.plist; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000030 /* PyOrbitLink.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PyOrbitLink.entitlements; path = PyOrbitLink/Resources/PyOrbitLink.entitlements; sourceTree = SOURCE_ROOT; };
+		AB000000000000000000031 /* PyOrbitLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PyOrbitLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AC000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AC000000000000000000002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000031 /* PyOrbitLink.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000003 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000004 /* Telemetry.swift */,
+				AB000000000000000000005 /* SignalReading.swift */,
+				AB000000000000000000006 /* ChatMessage.swift */,
+				AB000000000000000000007 /* Alert.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000004 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000008 /* APIClient.swift */,
+				AB000000000000000000009 /* SSEStreamClient.swift */,
+				AB000000000000000000010 /* LocationService.swift */,
+				AB000000000000000000011 /* SignalMonitorService.swift */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000005 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000012 /* LiveTrackViewModel.swift */,
+				AB000000000000000000013 /* SignalViewModel.swift */,
+				AB000000000000000000014 /* ChatViewModel.swift */,
+				AB000000000000000000015 /* PlannerViewModel.swift */,
+				AB000000000000000000016 /* AlertsViewModel.swift */,
+			);
+			name = ViewModels;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000006 /* Charts */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000017 /* AERChart.swift */,
+				AB000000000000000000018 /* SignalChart.swift */,
+				AB000000000000000000019 /* LinkBudgetChart.swift */,
+			);
+			name = Charts;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000007 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000020 /* SatelliteMapView.swift */,
+				AB000000000000000000021 /* SignalGauge.swift */,
+				AB000000000000000000022 /* StreamingText.swift */,
+			);
+			name = Components;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000008 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000023 /* LiveTrackView.swift */,
+				AB000000000000000000024 /* SignalView.swift */,
+				AB000000000000000000025 /* ChatView.swift */,
+				AB000000000000000000026 /* PlannerView.swift */,
+				AB000000000000000000027 /* AlertsView.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000009 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000028 /* Assets.xcassets */,
+				AB000000000000000000029 /* Info.plist */,
+				AB000000000000000000030 /* PyOrbitLink.entitlements */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000010 /* PyOrbitLink */ = {
+			isa = PBXGroup;
+			children = (
+				AB000000000000000000001 /* PyOrbitLinkApp.swift */,
+				AB000000000000000000002 /* AppConfig.swift */,
+				AB000000000000000000003 /* ContentView.swift */,
+				AC000000000000000000003 /* Models */,
+				AC000000000000000000004 /* Services */,
+				AC000000000000000000005 /* ViewModels */,
+				AC000000000000000000006 /* Charts */,
+				AC000000000000000000007 /* Components */,
+				AC000000000000000000008 /* Views */,
+				AC000000000000000000009 /* Resources */,
+			);
+			name = PyOrbitLink;
+			sourceTree = "<group>";
+		};
+		AC000000000000000000011 /* Main Group */ = {
+			isa = PBXGroup;
+			children = (
+				AC000000000000000000010 /* PyOrbitLink */,
+				AC000000000000000000002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AD000000000000000000001 /* PyOrbitLink */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AE000000000000000000001 /* Build configuration list for PBXNativeTarget "PyOrbitLink" */;
+			buildPhases = (
+				AF000000000000000000001 /* Sources */,
+				AC000000000000000000001 /* Frameworks */,
+				AF000000000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PyOrbitLink;
+			productName = PyOrbitLink;
+			productReference = AB000000000000000000031 /* PyOrbitLink.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AD000000000000000000002 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				ORGANIZATIONNAME = "PyOrbit Link";
+				TargetAttributes = {
+					AD000000000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = AE000000000000000000002 /* Build configuration list for PBXProject "PyOrbitLink" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AC000000000000000000011 /* Main Group */;
+			productRefGroup = AC000000000000000000002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AD000000000000000000001 /* PyOrbitLink */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AF000000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000000000000000000028 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AF000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000000000000000000001 /* PyOrbitLinkApp.swift in Sources */,
+				AA000000000000000000002 /* AppConfig.swift in Sources */,
+				AA000000000000000000003 /* ContentView.swift in Sources */,
+				AA000000000000000000004 /* Telemetry.swift in Sources */,
+				AA000000000000000000005 /* SignalReading.swift in Sources */,
+				AA000000000000000000006 /* ChatMessage.swift in Sources */,
+				AA000000000000000000007 /* Alert.swift in Sources */,
+				AA000000000000000000008 /* APIClient.swift in Sources */,
+				AA000000000000000000009 /* SSEStreamClient.swift in Sources */,
+				AA000000000000000000010 /* LocationService.swift in Sources */,
+				AA000000000000000000011 /* SignalMonitorService.swift in Sources */,
+				AA000000000000000000012 /* LiveTrackViewModel.swift in Sources */,
+				AA000000000000000000013 /* SignalViewModel.swift in Sources */,
+				AA000000000000000000014 /* ChatViewModel.swift in Sources */,
+				AA000000000000000000015 /* PlannerViewModel.swift in Sources */,
+				AA000000000000000000016 /* AlertsViewModel.swift in Sources */,
+				AA000000000000000000017 /* AERChart.swift in Sources */,
+				AA000000000000000000018 /* SignalChart.swift in Sources */,
+				AA000000000000000000019 /* LinkBudgetChart.swift in Sources */,
+				AA000000000000000000020 /* SatelliteMapView.swift in Sources */,
+				AA000000000000000000021 /* SignalGauge.swift in Sources */,
+				AA000000000000000000022 /* StreamingText.swift in Sources */,
+				AA000000000000000000023 /* LiveTrackView.swift in Sources */,
+				AA000000000000000000024 /* SignalView.swift in Sources */,
+				AA000000000000000000025 /* ChatView.swift in Sources */,
+				AA000000000000000000026 /* PlannerView.swift in Sources */,
+				AA000000000000000000027 /* AlertsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AE000000000000000000003 /* Debug — Target */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PyOrbitLink/Resources/PyOrbitLink.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PyOrbitLink/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pyorbitlink.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AE000000000000000000004 /* Release — Target */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PyOrbitLink/Resources/PyOrbitLink.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PyOrbitLink/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pyorbitlink.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AE000000000000000000005 /* Debug — Project */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLE = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AE000000000000000000006 /* Release — Project */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLE = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AE000000000000000000001 /* Build configuration list for PBXNativeTarget "PyOrbitLink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE000000000000000000003 /* Debug */,
+				AE000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AE000000000000000000002 /* Build configuration list for PBXProject "PyOrbitLink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE000000000000000000005 /* Debug */,
+				AE000000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = AD000000000000000000002 /* Project object */;
+}
