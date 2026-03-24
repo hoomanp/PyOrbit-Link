@@ -27,7 +27,6 @@ struct PlannerView: View {
             Image(systemName: "brain.head.profile")
                 .font(.system(size: 36))
                 .foregroundStyle(.orange)
-                .symbolEffect(.bounce, value: vm.isProcessing)
             Text("Natural Language Planner")
                 .font(.headline)
             Text("Describe what you want in plain English. The AI maps it to a mission function.")

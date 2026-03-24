@@ -105,7 +105,8 @@ final class LiveTrackViewModel: ObservableObject {
                 elevation          : payload.elevation,
                 range              : payload.range,
                 fspl               : payload.fspl,
-                observerCoordinate : coord
+                observerCoordinate : coord,
+                satelliteName      : payload.satName
             )
             latestSnapshot = snap
             appendToHistory(snap)
@@ -133,6 +134,3 @@ final class LiveTrackViewModel: ObservableObject {
     }
 }
 
-private extension AppConfig {
-    static let defaultServerURL = URL(string: "http://\(AppConfig.defaultHost):\(AppConfig.defaultPort)")!
-}

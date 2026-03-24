@@ -67,6 +67,3 @@ final class PlannerViewModel: ObservableObject {
     }
 }
 
-private extension AppConfig {
-    static let defaultServerURL = URL(string: "http://\(AppConfig.defaultHost):\(AppConfig.defaultPort)")!
-}

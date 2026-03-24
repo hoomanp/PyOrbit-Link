@@ -30,4 +30,7 @@ enum AppConfig {
     // MARK: – Physics constants used in UI
     static let speedOfLight: Double = 299_792_458   // m/s
     static let frequencyHz: Double  = 437_525_000   // 437.525 MHz (UHF amateur)
+
+    // MARK: – Convenience URL (used as default in ViewModels)
+    static let defaultServerURL = URL(string: "http://\(defaultHost):\(defaultPort)")!
 }

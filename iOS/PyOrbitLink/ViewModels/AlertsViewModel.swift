@@ -76,6 +76,3 @@ final class AlertsViewModel: ObservableObject {
     }
 }
 
-private extension AppConfig {
-    static let defaultServerURL = URL(string: "http://\(AppConfig.defaultHost):\(AppConfig.defaultPort)")!
-}

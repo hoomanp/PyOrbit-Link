@@ -60,7 +60,6 @@ struct AlertsView: View {
             Image(systemName: "checkmark.shield.fill")
                 .font(.system(size: 56))
                 .foregroundStyle(.green)
-                .symbolEffect(.pulse)
             Text("No Anomalies Detected")
                 .font(.title3.weight(.semibold))
             Text("The AI anomaly monitor is watching satellite telemetry in real time. Alerts appear here when thresholds are exceeded.")

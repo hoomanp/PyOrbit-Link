@@ -41,7 +41,6 @@ struct SatelliteMapView: View {
                         Image(systemName: "dot.radiowaves.right")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundStyle(snap.isVisible ? .cyan : .gray)
-                            .symbolEffect(.variableColor.iterative.dimInactiveLayers, value: snap.isVisible)
                     }
                 }
 

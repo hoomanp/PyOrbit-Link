@@ -54,7 +54,7 @@ struct LinkBudgetChart: View {
                     x: .value("Name",  c.name),
                     y: .value("Value", c.value)
                 )
-                .foregroundStyle(c.isLoss ? .red.gradient : .green.gradient)
+                .foregroundStyle(c.isLoss ? Color.red : Color.green)
                 .cornerRadius(4)
                 .annotation(position: c.value >= 0 ? .top : .bottom) {
                     Text(String(format: "%.1f", c.value))
@@ -64,17 +64,14 @@ struct LinkBudgetChart: View {
             }
             .chartXAxis {
                 AxisMarks { value in
-                    AxisValueLabel {
-                        if let s = value.as(String.self) {
-                            Text(s).font(.system(size: 9)).lineLimit(1)
-                        }
-                    }
+                    AxisValueLabel(value.as(String.self) ?? "")
+                        .font(.system(size: 9))
                 }
             }
             .chartYAxis {
-                AxisMarks(position: .leading, values: .automatic(desiredCount: 5)) {
+                AxisMarks(position: .leading, values: .automatic(desiredCount: 5)) { value in
                     AxisGridLine()
-                    AxisValueLabel { if let v = $0.as(Double.self) { Text("\(Int(v))") } }
+                    AxisValueLabel(value.as(Double.self).map { "\(Int($0))" } ?? "")
                 }
             }
             .frame(height: 170)
@@ -110,9 +107,10 @@ struct FSPLTrendChart: View {
         }
         .chartXAxis(.hidden)
         .chartYAxis {
-            AxisMarks(position: .trailing, values: .automatic(desiredCount: 3)) {
+            AxisMarks(position: .trailing, values: .automatic(desiredCount: 3)) { value in
                 AxisGridLine()
-                AxisValueLabel { if let v = $0.as(Double.self) { Text("\(Int(v)) dB").font(.system(size: 9)) } }
+                AxisValueLabel(value.as(Double.self).map { "\(Int($0)) dB" } ?? "")
+                    .font(.system(size: 9))
             }
         }
         .frame(height: 80)

@@ -54,9 +54,9 @@ struct SignalQualityChart: View {
             }
         }
         .chartYAxis {
-            AxisMarks(position: .leading, values: [0, 25, 50, 75, 100]) {
+            AxisMarks(position: .leading, values: [0, 25, 50, 75, 100]) { value in
                 AxisGridLine()
-                AxisValueLabel { if let v = $0.as(Double.self) { Text("\(Int(v))%") } }
+                AxisValueLabel(value.as(Double.self).map { "\(Int($0))%" } ?? "")
             }
         }
         .frame(height: 160)
@@ -119,9 +119,9 @@ struct GPSAccuracyChart: View {
             }
         }
         .chartYAxis {
-            AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) {
+            AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { value in
                 AxisGridLine()
-                AxisValueLabel { if let v = $0.as(Double.self) { Text("\(Int(v)) m") } }
+                AxisValueLabel(value.as(Double.self).map { "\(Int($0)) m" } ?? "")
             }
         }
         .frame(height: 130)

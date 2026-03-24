@@ -3,7 +3,7 @@ import SwiftUI
 
 // MARK: – One reading collected by SignalMonitorService
 
-struct SignalReading: Identifiable {
+struct SignalReading: Identifiable, Equatable {
     let id          = UUID()
     let timestamp   : Date
     let radioTech   : RadioTechnology    // from CoreTelephony
@@ -108,11 +108,11 @@ enum GPSAccuracy {
     case high, medium, low, unavailable
 
     init(_ metres: Double?) {
-        switch metres {
-        case .none:        self = .unavailable
-        case ..<10:        self = .high
-        case 10..<30:      self = .medium
-        default:           self = .low
+        guard let m = metres else { self = .unavailable; return }
+        switch m {
+        case ..<10:    self = .high
+        case 10..<30:  self = .medium
+        default:       self = .low
         }
     }
 

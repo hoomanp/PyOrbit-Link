@@ -40,7 +40,7 @@ final class ChatViewModel: ObservableObject {
         messages.append(userMsg)
 
         // Placeholder for streaming response
-        var assistantMsg = ChatMessage(role: .assistant, content: "", isStreaming: true)
+        let assistantMsg = ChatMessage(role: .assistant, content: "", isStreaming: true)
         messages.append(assistantMsg)
         isWaiting = true
 
@@ -88,6 +88,3 @@ final class ChatViewModel: ObservableObject {
     }
 }
 
-private extension AppConfig {
-    static let defaultServerURL = URL(string: "http://\(AppConfig.defaultHost):\(AppConfig.defaultPort)")!
-}

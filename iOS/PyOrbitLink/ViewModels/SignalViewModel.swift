@@ -104,7 +104,3 @@ final class SignalViewModel: ObservableObject {
     }
 }
 
-private extension AppConfig {
-    static let defaultServerURL = URL(string: "http://\(AppConfig.defaultHost):\(AppConfig.defaultPort)")!
-    static let defaultNoradID   = "25544"
-}

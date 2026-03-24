@@ -67,7 +67,6 @@ struct ChatView: View {
             Image(systemName: "message.badge.waveform.fill")
                 .font(.system(size: 48))
                 .foregroundStyle(.purple)
-                .symbolEffect(.pulse)
             Text("AI Satellite Assistant")
                 .font(.title3.weight(.semibold))
             Text("Ask about pass quality, signal health, mission planning, or orbital mechanics.")
