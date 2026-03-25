@@ -32,6 +32,7 @@ struct ContentView: View {
                     .tag(tab)
             }
         }
+        .tabViewStyle(.automatic)
         .tint(selectedTab.activeColor)
         .onAppear {
             wireViewModels()

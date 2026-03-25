@@ -5,6 +5,7 @@ struct LiveTrackView: View {
 
     @ObservedObject var vm: LiveTrackViewModel
     @EnvironmentObject private var locationService: LocationService
+    @Environment(\.horizontalSizeClass) private var hSizeClass
     @State private var selectedPanel: Panel = .map
 
     enum Panel: String, CaseIterable {
@@ -25,6 +26,8 @@ struct LiveTrackView: View {
                 passEvents
             }
             .padding()
+            .frame(maxWidth: hSizeClass == .regular ? 800 : .infinity)
+            .frame(maxWidth: .infinity)
         }
         .background(Color(uiColor: .systemGroupedBackground))
         .toolbar { streamToolbarButton }
@@ -117,7 +120,8 @@ struct LiveTrackView: View {
     // MARK: – Telemetry cards
 
     private var telemetryCards: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+        let cols = hSizeClass == .regular ? 4 : 2
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: cols), spacing: 12) {
             TelemetryCard(title: "Azimuth",   value: vm.latestSnapshot.map { String(format: "%.1f°", $0.azimuth) }   ?? "—", icon: "safari",           color: .cyan)
             TelemetryCard(title: "Elevation", value: vm.latestSnapshot.map { String(format: "%.1f°", $0.elevation) } ?? "—", icon: "arrow.up.circle",   color: .green)
             TelemetryCard(title: "Range",     value: vm.latestSnapshot.map { String(format: "%.0f km", $0.range) }   ?? "—", icon: "ruler",              color: .orange)
