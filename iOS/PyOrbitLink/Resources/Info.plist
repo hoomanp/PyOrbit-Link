@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>PyOrbit Link</string>
+	<string>ConstellaSim</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -46,7 +46,7 @@
 
 	<!-- Local network permission (iOS 14+) -->
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>PyOrbit Link connects to the satellite tracking backend running on your local network.</string>
+	<string>ConstellaSim connects to the satellite tracking backend running on your local network.</string>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_http._tcp</string>

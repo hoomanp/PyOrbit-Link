@@ -22,7 +22,7 @@ enum AppConfig {
     static let alertPollInterval: TimeInterval = 5
 
     // MARK: – App Store metadata
-    static let bundleID     = "com.pyorbitlink.app"
+    static let bundleID     = "com.constellasim.app"
     static let appVersion   = "1.0.0"
     static let buildNumber  = "1"
     static let teamID       = "XXXXXXXXXX"   // Replace with your Apple Developer Team ID

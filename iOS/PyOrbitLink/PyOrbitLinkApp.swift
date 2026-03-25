@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct PyOrbitLinkApp: App {
+struct ConstellaSimApp: App {
 
     @StateObject private var locationService   = LocationService()
     @StateObject private var signalService     = SignalMonitorService()
