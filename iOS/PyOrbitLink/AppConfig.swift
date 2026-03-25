@@ -3,8 +3,8 @@ import Foundation
 enum AppConfig {
 
     // MARK: – Backend defaults (override in Settings tab)
-    static let defaultHost    = "192.168.1.100"   // LAN IP of the Flask server
-    static let defaultPort    = 5000
+    static let defaultHost    = "127.0.0.1"        // localhost for simulator testing
+    static let defaultPort    = 5001
     static let defaultNoradID = "25544"            // ISS
 
     // MARK: – SSE / streaming

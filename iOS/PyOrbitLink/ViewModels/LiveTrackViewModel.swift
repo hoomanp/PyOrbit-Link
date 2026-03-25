@@ -34,6 +34,19 @@ final class LiveTrackViewModel: ObservableObject {
         self.serverURL       = serverURL
         self.noradID         = noradID
         self.locationService = locationService
+        loadDemoHistory()
+    }
+
+    /// Pre-populate charts and telemetry cards with the Tarzana, CA sample pass
+    /// so the UI shows realistic data immediately on launch.
+    private func loadDemoHistory() {
+        let history = SamplePass.buildHistory()
+        aerHistory     = history
+        polarHistory   = history.map { PolarPoint(azimuth: $0.azimuth,
+                                                  elevation: $0.elevation,
+                                                  timestamp: $0.timestamp) }
+        latestSnapshot = SamplePass.latestSnapshot()
+        aiText         = SamplePass.demoAIText
     }
 
     // MARK: – Stream control

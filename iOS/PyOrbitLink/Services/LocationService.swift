@@ -8,7 +8,7 @@ import Combine
 final class LocationService: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     // MARK: Published state
-    @Published private(set) var coordinate  : CLLocationCoordinate2D?
+    @Published private(set) var coordinate  : CLLocationCoordinate2D? = DemoLocation.coordinate
     @Published private(set) var accuracy    : Double?           // metres
     @Published private(set) var altitude    : Double?           // metres
     @Published private(set) var heading     : Double?           // degrees magnetic
@@ -55,11 +55,11 @@ final class LocationService: NSObject, ObservableObject, CLLocationManagerDelega
     // MARK: – Convenience: current lat/lon as strings for API
 
     var latString: String {
-        guard let c = coordinate else { return "0" }
+        guard let c = coordinate else { return DemoLocation.latString }
         return String(format: "%.6f", c.latitude)
     }
     var lonString: String {
-        guard let c = coordinate else { return "0" }
+        guard let c = coordinate else { return DemoLocation.lonString }
         return String(format: "%.6f", c.longitude)
     }
 
