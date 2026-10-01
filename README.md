@@ -1,114 +1,173 @@
-# PyOrbit-Link: LEO Satellite Tracker, RF Link Budget Toolkit & Native iOS App
+# PyOrbit-Link: LEO Satellite Ephemeris Tracker, RF Link Budget Toolkit & Native iOS App 🛰️
 
-**PyOrbit-Link** is a full-stack satellite communications platform combining a Python/Flask backend for real-time LEO orbital mechanics with a production-grade **native iOS app** built in SwiftUI. It bridges orbital mechanics, RF engineering, and mobile UX into a single deployable system.
+> **Full-stack aerospace telecommunications platform bridging SGP4 orbital mechanics, Ka/V-band RF link budgeting, multi-cloud RAG mission intelligence, and a production-grade native SwiftUI iOS flight companion.**
 
----
-
-## What's Inside
-
-| Layer | Technology | Purpose |
-|---|---|---|
-| `pyorbit_link/` | Python 3.9+, Skyfield | Orbital propagation (SGP4), AER, FSPL, Doppler |
-| `mobile_client/app.py` | Flask, SSE | REST + Server-Sent Events API (port 5001) |
-| `iOS/PyOrbitLink/` | SwiftUI, iOS 17+ | Native iPhone app, App Store ready |
+[![Python: 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
+[![iOS: 17.0+ (SwiftUI)](https://img.shields.io/badge/iOS-17.0%2B%20(SwiftUI)-black.svg)](https://developer.apple.com/xcode/swiftui/)
+[![Propagation: Skyfield SGP4](https://img.shields.io/badge/Propagation-Skyfield%20SGP4-orange.svg)](https://rhodesmill.org/skyfield/)
+[![Standards: ITU--R P.618](https://img.shields.io/badge/Standards-ITU--R%20P.618%20(Ka%2FV--Band)-green.svg)](#-rf--telecommunications-formulations)
+[![AI: Multi--Cloud RAG](https://img.shields.io/badge/AI-Multi--Cloud%20RAG%20(Gemini%2FAzure%2FBedrock)-purple.svg)](#-multi-cloud--rag-mission-assistant)
+[![Target: Amazon Kuiper | Starlink](https://img.shields.io/badge/Target-Project%20Kuiper%20%7C%20Starlink-00bcd4.svg)](#-executive-summary--aerospace-thesis)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
-## Key Features
+## 🧭 Executive Summary & Aerospace Thesis
 
-### Orbital Domain
-- **CelesTrak TLE Fetch:** Real-time Two-Line Elements via NORAD ID (ISS default: 25544).
-- **SGP4 Propagation:** High-fidelity pass prediction with Skyfield's `EarthSatellite`.
-- **AER Computation:** Azimuth, Elevation, and Range for any ground observer.
-- **Geocoding:** ZIP code, city name, or GPS coordinates via Geopy/Nominatim.
+Low Earth Orbit (LEO) satellite communications represent a paradigm shift from traditional geostationary (GEO) architectures. Operating at altitudes between 300 km and 1,200 km, LEO constellations (e.g., **Amazon Project Kuiper**, **SpaceX Starlink**) achieve round-trip latencies below 30ms. However, this proximity introduces formidable systems challenges:
+1. **Dynamic High-Velocity Doppler Shifts:** Orbital speeds of ~7.5 km/s induce severe frequency shifts ($\pm 50 \text{ to } 75 \text{ kHz}$ at Ka/V-band), necessitating real-time carrier frequency correction.
+2. **Rapid Slant-Range & Path Loss Variations:** Free-Space Path Loss (FSPL) fluctuates dynamically by up to 15 dB as a satellite transits from horizon ($10^\circ$ elevation) to zenith ($90^\circ$).
+3. **Severe Atmospheric & Rain Fade:** Millimeter-wave links (Ka-band at 26–40 GHz and V-band at 40–75 GHz) suffer heavy hydrometeor and gaseous absorption modeled according to ITU-R P.618 standards.
 
-### RF & Link Budget
-- **FSPL Model:** Free-space path loss at configurable frequency (default 437.525 MHz UHF).
-- **Doppler Shift:** Real-time ±kHz frequency correction at 7.5 km/s orbital velocity.
-- **Atmospheric Attenuation:** ITU-R P.618 rain fade and gaseous loss (Ka/V-band).
-- **CNR / Link Budget:** Carrier-to-noise ratio and antenna gain (dBi) modeling.
-
-### AI / RAG Mission Assistant (5 Features)
-1. **Streaming Analysis** — SSE endpoint streams AI commentary token-by-token as telemetry arrives.
-2. **Multi-Turn Chat** — Contextual follow-up questions about the current pass and link budget.
-3. **NL2Function Planner** — Natural language commands resolve to simulation actions ("Track ISS from Paris").
-4. **Anomaly Alerts** — Background monitor flags degraded link margins (WARNING / CRITICAL severity).
-5. **Network Briefing** — Downloadable Markdown report grounded in `knowledge_base/` ITU-R documents.
-
-Providers: **Google Gemini 1.5 Flash**, **Azure OpenAI (GPT-4 Turbo)**, **Amazon Bedrock (Claude 3)**.
-
-### Native iOS App — PyOrbitLink
-A fully App-Store-ready SwiftUI application connecting to the Flask backend over LAN or internet.
-
-**5 Tabs:**
-
-| Tab | Description |
-|---|---|
-| **Live Track** | Real-time SSE satellite map (MapKit iOS 17), AER chart, Sky View polar plot, Link Budget chart |
-| **Signal Monitor** | Device GPS accuracy, cellular radio tech (5G NR/LTE/WCDMA/GSM), Wi-Fi vs cellular, rolling history |
-| **AI Chat** | Multi-turn streaming conversation with the Mission Assistant |
-| **Mission Planner** | Natural-language mission planning via the NL2Function endpoint |
-| **Anomaly Alerts** | Polled alert feed with badge count and WARNING/CRITICAL classification |
-
-**Device Sensors:**
-- `CoreLocation` — GPS coordinates, accuracy, altitude, heading
-- `CoreTelephony` — Radio access technology (5G NR / LTE / WCDMA / GSM)
-- `NWPathMonitor` — Wi-Fi vs. cellular reachability
-- Swift Charts — AER time series, polar sky view, link budget waterfall
-
-**Demo Mode — ZIP 91356-4144, Tarzana, CA:**
-When GPS is unavailable (e.g. simulator), the app pre-loads a 15-point ISS pass arc:
-
-| Metric | Value |
-|---|---|
-| Observer | 34.1675°N, 118.5504°W (Tarzana, CA) |
-| Pass direction | SW (220°) → peak W (305°) → NW (351°) |
-| Peak elevation | 63.2° at 469 km range |
-| Peak FSPL | 138.7 dB at 437.525 MHz |
-| Horizon FSPL | 148.5 dB (elevation 5.4°) |
+**PyOrbit-Link** provides aerospace systems and RF engineers with an end-to-end analytical framework. It couples NORAD Two-Line Element (TLE) acquisition, high-precision SGP4 orbit propagation, and physics-based RF link budgets with a **production-grade native iOS client** and a **multi-cloud RAG mission assistant**.
 
 ---
 
-## Architecture
+## 🏛️ System Architecture
 
+```mermaid
+flowchart TD
+    subgraph OrbitalData["Ephemeris & Geolocation Sources"]
+        CelesTrak["CelesTrak Live API (NORAD TLEs)"]
+        Nominatim["Nominatim Geocoder (Geopy)"]
+        Sensors["iOS Device Sensors (CoreLocation GPS / NWPathMonitor)"]
+    end
+
+    subgraph BackendEngine["PyOrbit-Link Physics & Service Plane (Port 5001)"]
+        TLECache["api.py: Cached TLE Ingestion"]
+        Tracker["tracker.py: Skyfield SGP4 Propagation"]
+        Calc["calculator.py: Physics-Based RF Link & Doppler Engine"]
+        REST_SSE["mobile_client/app.py: REST + Server-Sent Events API"]
+        
+        TLECache --> Tracker
+        Nominatim --> Tracker
+        Tracker --> Calc
+        Calc --> REST_SSE
+    end
+
+    subgraph NativeClient["Native iOS Client (SwiftUI · iOS 17+)"]
+        LiveView["Live Track: MapKit Satellite View"]
+        Charts["Signal Monitor: Swift Charts AER / Waterfall"]
+        ChatUI["Mission Assistant: Token Streaming UI"]
+        PlannerUI["NL Planner: Function Calling Interface"]
+    end
+
+    subgraph AIMissionHub["Multi-Cloud RAG Mission Intelligence"]
+        KB[("Domain Knowledge Base\n• ITU-R P.618 Standards\n• Space Regulations")]
+        RAGModule["llm.py: RAG Pipeline"]
+        CloudAI{"Multi-Cloud LLM Hub"}
+        Gemini["Google Gemini (1.5 Flash)"]
+        Azure["Azure OpenAI (GPT-4 Turbo)"]
+        Bedrock["Amazon Bedrock (Claude 3)"]
+        
+        KB --> RAGModule
+        RAGModule --> CloudAI
+        CloudAI --> Gemini
+        CloudAI --> Azure
+        CloudAI --> Bedrock
+    end
+
+    OrbitalData --> BackendEngine
+    Sensors --> NativeClient
+    NativeClient <-->|REST / SSE JSON| REST_SSE
+    REST_SSE <--> AIMissionHub
 ```
+
+---
+
+## 📐 RF & Telecommunications Formulations
+
+### 1. Free-Space Path Loss (FSPL)
+
+Free-Space Path Loss models isotropic signal dissipation over slant-range distance $d$ at carrier frequency $f$:
+
+$$\text{FSPL (dB)} = 20 \log_{10}(d) + 20 \log_{10}(f) + 20 \log_{10}\left(\frac{4\pi}{c}\right)$$
+
+Where $c = 299,792,458 \text{ m/s}$ is the exact speed of light in vacuum.
+
+### 2. Relativistic Orbital Doppler Shift
+
+Frequency displacement $\Delta f$ induced by relative line-of-sight velocity vector $\mathbf{v}_{\text{rel}}$:
+
+$$\Delta f = -f_0 \cdot \frac{\mathbf{v}_{\text{rel}} \cdot \hat{\mathbf{r}}_{\text{LOS}}}{c}$$
+
+At Ka-band frequencies ($f_0 \approx 28 \text{ GHz}$), Doppler shifts frequently exceed $\pm 65 \text{ kHz}$, requiring digital phased-array frequency tracking at the ground terminal.
+
+### 3. Parabolic Antenna Gain
+
+Directive antenna gain $G$ derived from physical aperture diameter $D$, aperture efficiency $\eta$ (nominal 0.60), and wavelength $\lambda = c / f$:
+
+$$G(\text{dBi}) = 10 \log_{10}\left( \eta \cdot \left(\frac{\pi D}{\lambda}\right)^2 \right)$$
+
+### 4. Carrier-to-Noise Ratio (CNR) Link Budget
+
+$$\text{CNR (dB)} = \text{EIRP} - \text{FSPL} - L_{\text{atm}} + \left(\frac{G}{T}\right) - 10 \log_{10}(k) - 10 \log_{10}(B)$$
+
+Where:
+- $\text{EIRP} = P_{\text{tx}} + G_{\text{tx}}$ is the Equivalent Isotropically Radiated Power.
+- $L_{\text{atm}}$ models ITU-R P.618 atmospheric gaseous absorption and rain fade clamped at low elevation angles ($\theta \ge 1^\circ$).
+- $G/T$ is the receiver figure of merit (antenna gain over system noise temperature).
+- $k \approx 1.380649 \times 10^{-23} \text{ J/K}$ is Boltzmann's constant.
+- $B$ is channel bandwidth in Hz.
+
+---
+
+## 📱 Native iOS Client Architecture (`iOS/PyOrbitLink/`)
+
+Built natively in Swift 5.9 and SwiftUI for iOS 17.0+:
+
+| Screen / Feature | Native Frameworks | Capabilities |
+|---|---|---|
+| **1. Live Track** | `MapKit` (iOS 17 API), `CoreLocation` | Real-time 2D orbital map with ground observer pin and ISS satellite trajectory. |
+| **2. Signal Monitor** | `Swift Charts` | Dynamic AER time-series, polar radar azimuth/elevation sky view, and RF link budget waterfall. |
+| **3. AI Mission Chat** | `URLSession` async/await, SSE | Token-by-token streaming RAG flight analyst responses with animated cursor. |
+| **4. Mission Planner** | Natural Language Parser | NL2Function parser converting plain English into mission parameters. |
+| **5. Anomaly Alerts** | `UserNotifications` | Real-time warnings when link margins degrade below thresholds. |
+
+---
+
+## 🔬 Multi-Cloud RAG Mission Assistant
+
+PyOrbit-Link integrates a decoupled AI telemetry analyst capable of running against **Google Gemini**, **Azure OpenAI**, or **Amazon Bedrock**:
+1. **Streaming Telemetry Analysis (`GET /api/simulate/stream`):** Server-Sent Events (SSE) push token-by-token engineering commentary as the pass unfolds.
+2. **Contextual Multi-Turn Chat (`POST /api/chat`):** Server-side session memory allowing flight controllers to query pass snapshots (e.g., *"Why did CNR drop below 8 dB at elevation 12°?"*).
+3. **NL2Function Mission Planner (`POST /api/plan`):** Parses plain-language flight instructions (*"Track ISS from Paris with Ka-band link budget"*) into validated parameters using strict schema allowlists.
+4. **Autonomous Anomaly Detection (`GET /api/alerts`):** Threaded background watcher evaluating rolling link saturation and Doppler margins.
+5. **Grounded Standards Briefings (`GET /api/briefing`):** Exports technical Markdown briefings grounded in `knowledge_base/sat_standards.txt`.
+
+---
+
+## 📂 Repository Topology
+
+```text
 PyOrbit-Link/
-├── pyorbit_link/
-│   ├── tracker.py          # SGP4 propagation, AER, pass prediction
-│   ├── calculator.py       # FSPL, Doppler, CNR, atmospheric loss
-│   ├── visualizer.py       # Matplotlib polar sky view
-│   ├── api.py              # CelesTrak TLE fetch (timeout=10s)
-│   ├── utils.py            # Geocoding (Geopy/Nominatim)
-│   └── llm.py              # RAG AI assistant (Google/Azure/Bedrock)
+├── README.md                      # Executive Platform Specification
+├── GUIDE.md                       # Comprehensive User & Operations Manual
+├── requirements.txt               # Production Python dependencies
+├── pyorbit_link/                  # Core Systems Engine
+│   ├── tracker.py                 # SGP4 orbit propagation & pass prediction
+│   ├── calculator.py              # FSPL, Doppler, antenna gain, atmospheric losses, CNR
+│   ├── visualizer.py              # Polar sky-track plotting (Matplotlib)
+│   ├── api.py                     # CelesTrak TLE fetching with timeout protection
+│   ├── utils.py                   # LRU-cached reverse geocoding
+│   ├── llm.py                     # Multi-cloud RAG mission assistant
+│   ├── planner.py                 # Ground pass planning engine
+│   └── monitor.py                 # Continuous link margin telemetry watcher
 ├── mobile_client/
-│   └── app.py              # Flask REST + SSE API (port 5001)
-├── knowledge_base/         # ITU-R standards for RAG grounding
-├── examples/               # CLI demos
-└── iOS/
-    └── PyOrbitLink/
-        ├── Models/         # Telemetry, SignalReading, SampleData (demo pass)
-        ├── Services/       # LocationService, SignalMonitorService
-        ├── ViewModels/     # LiveTrack, Signal, Chat, Planner, Alerts
-        ├── Views/          # 5 SwiftUI tab views
-        ├── Charts/         # AERChart, SignalChart, LinkBudgetChart
-        └── Components/     # SatelliteMapView, SignalGauge, StreamingText
+│   ├── app.py                     # Flask REST + SSE application (Port 5001)
+│   └── templates/                 # Mobile-responsive web UI fallback
+├── iOS/PyOrbitLink/               # Native iOS 17+ SwiftUI Application
+│   ├── PyOrbitLink/               # App entry, views, view models, network services
+│   └── PyOrbitLink.xcodeproj      # Xcode project configuration
+└── examples/
+    └── advanced_features.py       # Full-spectrum desktop pass prediction demo
 ```
-
-### API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/track` | One-shot telemetry for given lat/lon |
-| `GET` | `/api/track/stream` | SSE: telemetry frame + streaming AI analysis |
-| `POST` | `/api/chat` | Multi-turn AI conversation |
-| `POST` | `/api/chat/reset` | Clear session history |
-| `POST` | `/api/plan` | NL2Function mission planning |
-| `GET` | `/api/alerts` | Anomaly alert feed (JSON array) |
-| `GET` | `/api/briefing` | Download Markdown network briefing |
 
 ---
 
-## Installation
+## 🚀 Quickstart & Validation
+
+### 1. Backend Server Setup
 
 ```bash
 git clone https://github.com/hoomanp/PyOrbit-Link.git
@@ -117,92 +176,23 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Start the Backend
+### 2. Launch the Backend API (Port 5001)
 
 ```bash
-export FLASK_SECRET_KEY=your-secret-key   # required
-export GOOGLE_API_KEY=your-key             # or AZURE_OPENAI_KEY / AWS creds
+export FLASK_SECRET_KEY="c2VjdXJlX2tleV9leGVjdXRpdmVfc2VsZWN0"
+export SAT_AI_PROVIDER="google"      # Or: azure, amazon
+export GOOGLE_API_KEY="your-gemini-key"
 export PORT=5001
+
 python3 mobile_client/app.py
 ```
 
-Web UI available at `http://localhost:5001`. Point the iOS app to your machine's LAN IP on the same port.
+### 3. Open Native iOS App
 
-### Build the iOS App
-
-Requirements: Xcode 15+, iOS 17.0+ deployment target.
-
-**Simulator (no signing):**
-```bash
-cd iOS
-xcodebuild -project PyOrbitLink.xcodeproj -target PyOrbitLink \
-           -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=NO
-xcrun simctl install booted build/Debug-iphonesimulator/PyOrbitLink.app
-xcrun simctl launch booted com.pyorbitlink.app
-```
-
-**Device / App Store:**
-```bash
-xcodebuild -project PyOrbitLink.xcodeproj -target PyOrbitLink \
-           -configuration Release -sdk iphoneos \
-           CODE_SIGNING_IDENTITY="iPhone Distribution: Your Name" \
-           DEVELOPMENT_TEAM=YOUR_TEAM_ID
-```
+Open `iOS/PyOrbitLink/PyOrbitLink.xcodeproj` in Xcode 15+, select iPhone 15/16/17 simulator or physical device, and run (`Cmd + R`).
 
 ---
 
-## Environment Variables
+## 📄 License & Attribution
 
-| Variable | Default | Description |
-|---|---|---|
-| `FLASK_SECRET_KEY` | — | **Required.** Cryptographic session key |
-| `PORT` | `5001` | Flask server port |
-| `SAT_AI_PROVIDER` | `google` | AI provider: `google`, `azure`, `amazon` |
-| `GOOGLE_API_KEY` | — | Google Gemini 1.5 Flash API key |
-| `AZURE_OPENAI_KEY` | — | Azure OpenAI API key |
-| `AZURE_OPENAI_ENDPOINT` | — | Azure OpenAI endpoint URL |
-| `AZURE_DEPLOYMENT_NAME` | `gpt-4-turbo` | Azure deployment name |
-| `ANOMALY_MONITOR` | `false` | Enable background alert polling thread |
-| `FLASK_DEBUG` | `false` | Development mode (never `true` in production) |
-
----
-
-## Tech Stack
-
-**Backend:** Python 3.9+, Flask, Skyfield (SGP4), Geopy, flask-limiter, python-dotenv
-
-**AI:** Google Generative AI (Gemini 1.5 Flash), OpenAI SDK (Azure), Boto3 (Amazon Bedrock)
-
-**iOS:** Swift 5.9, SwiftUI (iOS 17+), Swift Charts, MapKit (iOS 17 API), CoreLocation, CoreTelephony, NWPathMonitor, URLSession async/await
-
----
-
-## Changelog
-
-### v1.3 — Native iOS App + Demo Mode (2026-03)
-- Full SwiftUI native iOS app (`iOS/PyOrbitLink/`) — App Store ready, iOS 17.0+
-- 5 tabs: Live Track, Signal Monitor, AI Chat, Mission Planner, Anomaly Alerts
-- MapKit satellite map with Observer and ISS markers (real-time from backend)
-- Swift Charts: AER time series, polar sky view, link budget waterfall chart
-- Device sensors: CoreLocation GPS, CoreTelephony radio tech, NWPathMonitor
-- Demo mode with pre-computed ISS pass for ZIP 91356-4144 (Tarzana, CA)
-- Flexible JSON decoder handling string-formatted values (`"189.99°"`, `"8607.98 km"`)
-- Backend key mapping: `distance` → range, `fspl_db` → fspl
-- Fixed all Xcode 15 build issues (AxisValueLabel, gradient type, symbolEffect, MapKit iOS 17)
-
-### v1.2 — 5 AI Features + Security Audit (2026-02)
-- Streaming SSE AI analysis, multi-turn chat, NL2Function planner, anomaly monitor, briefing download
-- 18 security findings fixed: CSP nonces, rate limiting, path traversal guards, prompt injection sanitisation
-- `FLASK_SECRET_KEY` now required at startup; port moved to 5001
-
-### v1.1 — Backend Fixes
-- Fixed `EarthSatellite()` initialisation, `total_link_budget()` CNR return, division-by-zero at 0° elevation
-- Added `timeout=10` to CelesTrak requests; `FLASK_DEBUG` env var (default `false`)
-
----
-
-## License
-MIT License.
-
-## Contact
-**Hooman P.** — [GitHub](https://github.com/hoomanp)
+Distributed under the **MIT License**. Engineered and architected by **Hooman Parta** ([@hoomanp](https://github.com/hoomanp)).
