@@ -110,6 +110,19 @@ Where:
 - $k \approx 1.380649 \times 10^{-23} \text{ J/K}$ is Boltzmann's constant.
 - $B$ is channel bandwidth in Hz.
 
+### 📊 Sample Ka-Band Downlink Budget Breakdown (28 GHz)
+
+| Parameter Description | Variable / Symbol | Nominal Value | Unit | Engineering Impact |
+| :--- | :--- | :--- | :--- | :--- |
+| **Carrier Frequency** | $f_0$ | **`28.0`** | GHz | Ka-band high-throughput downlink |
+| **Orbit Slant Range (Zenith)** | $d$ | **`550.0`** | km | LEO nominal orbital altitude |
+| **Free-Space Path Loss** | $\text{FSPL}$ | **`-176.2`** | dB | Primary geometric signal dispersion |
+| **Atmospheric & Rain Attenuation** | $L_{\text{atm}}$ | **`-2.4`** | dB | ITU-R P.618 clear sky + moderate rain |
+| **Satellite EIRP** | $\text{EIRP}$ | **`+52.0`** | dBW | Phased-array transmit aperture power |
+| **Ground Receiver G/T** | $G/T$ | **`+18.5`** | dB/K | 60cm parabolic reflector dish |
+| **Channel Bandwidth** | $B$ | **`250.0`** | MHz | Wideband data channel |
+| **Resulting CNR Margin** | $\text{CNR}$ | **`+14.8`** | dB | Exceeds QPSK/8PSK demodulation threshold |
+
 ---
 
 ## 📱 Native iOS Client Architecture (`iOS/PyOrbitLink/`)
@@ -123,6 +136,16 @@ Built natively in Swift 5.9 and SwiftUI for iOS 17.0+:
 | **3. AI Mission Chat** | `URLSession` async/await, SSE | Token-by-token streaming RAG flight analyst responses with animated cursor. |
 | **4. Mission Planner** | Natural Language Parser | NL2Function parser converting plain English into mission parameters. |
 | **5. Anomaly Alerts** | `UserNotifications` | Real-time warnings when link margins degrade below thresholds. |
+
+### 📱 Client Architecture Comparison: Native SwiftUI vs. Web Client
+
+| Feature Domain | Native SwiftUI iOS App (`iOS/PyOrbitLink`) | Python / Flask Web Client (`mobile_client/`) |
+| :--- | :--- | :--- |
+| **Rendering Engine** | Native Metal-accelerated MapKit & Swift Charts | Browser DOM & HTML5 Canvas |
+| **Sensor Telemetry** | CoreLocation GPS + NWPathMonitor Cellular/WiFi | HTML5 Geolocation API |
+| **Offline Capabilities** | Pre-computed demo passes (ZIP 91356-4144) | Requires local server loopback |
+| **Streaming UI** | Low-latency URLSession async SSE event consumer | Fetch API EventSource stream |
+| **Target Role** | Field technician & flight operations companion | Headless REST automation & cross-platform testing |
 
 ---
 
