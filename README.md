@@ -1,29 +1,29 @@
-# PyOrbit-Link: LEO Satellite Ephemeris Tracker, RF Link Budget Toolkit & Native iOS App 🛰️
+# PyOrbit-Link: LEO Satellite Ephemeris Tracker, RF Link Budget Toolkit & Native iOS App
 
-> **Full-stack aerospace telecommunications platform bridging SGP4 orbital mechanics, Ka/V-band RF link budgeting, multi-cloud RAG mission intelligence, and a production-grade native SwiftUI iOS flight companion.**
+> **Aerospace telecommunications platform bridging SGP4 orbital mechanics, Ka/V-band RF link budgeting, multi-cloud RAG mission intelligence, and a native SwiftUI iOS flight companion.**
 
 [![Python: 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
 [![iOS: 17.0+ (SwiftUI)](https://img.shields.io/badge/iOS-17.0%2B%20(SwiftUI)-black.svg)](https://developer.apple.com/xcode/swiftui/)
 [![Propagation: Skyfield SGP4](https://img.shields.io/badge/Propagation-Skyfield%20SGP4-orange.svg)](https://rhodesmill.org/skyfield/)
-[![Standards: ITU--R P.618](https://img.shields.io/badge/Standards-ITU--R%20P.618%20(Ka%2FV--Band)-green.svg)](#-rf--telecommunications-formulations)
-[![AI: Multi--Cloud RAG](https://img.shields.io/badge/AI-Multi--Cloud%20RAG%20(Gemini%2FAzure%2FBedrock)-purple.svg)](#-multi-cloud--rag-mission-assistant)
-[![Target: Amazon Kuiper | Starlink](https://img.shields.io/badge/Target-Project%20Kuiper%20%7C%20Starlink-00bcd4.svg)](#-executive-summary--aerospace-thesis)
+[![Standards: ITU--R P.618](https://img.shields.io/badge/Standards-ITU--R%20P.618%20(Ka%2FV--Band)-green.svg)](#rf--telecommunications-formulations)
+[![AI: Multi--Cloud RAG](https://img.shields.io/badge/AI-Multi--Cloud%20RAG%20(Gemini%2FAzure%2FBedrock)-purple.svg)](#multi-cloud-rag-mission-assistant)
+[![Target: Amazon Kuiper | Starlink](https://img.shields.io/badge/Target-Project%20Kuiper%20%7C%20Starlink-00bcd4.svg)](#executive-summary--aerospace-thesis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
-## 🧭 Executive Summary & Aerospace Thesis
+## Executive Summary & Aerospace Thesis
 
-Low Earth Orbit (LEO) satellite communications represent a paradigm shift from traditional geostationary (GEO) architectures. Operating at altitudes between 300 km and 1,200 km, LEO constellations (e.g., **Amazon Project Kuiper**, **SpaceX Starlink**) achieve round-trip latencies below 30ms. However, this proximity introduces formidable systems challenges:
-1. **Dynamic High-Velocity Doppler Shifts:** Orbital speeds of ~7.5 km/s induce severe frequency shifts ($\pm 50 \text{ to } 75 \text{ kHz}$ at Ka/V-band), necessitating real-time carrier frequency correction.
+Low Earth Orbit (LEO) satellite communications operate in a distinct regime compared to geostationary (GEO) systems. Operating at altitudes between 300 km and 1,200 km, LEO constellations (e.g. Amazon Project Kuiper, SpaceX Starlink) achieve round-trip latencies below 30ms. However, this proximity introduces specific RF challenges:
+1. **High-Velocity Doppler Shifts:** Orbital speeds of ~7.5 km/s induce frequency shifts ($\pm 50 \text{ to } 75 \text{ kHz}$ at Ka/V-band), requiring real-time carrier frequency correction.
 2. **Rapid Slant-Range & Path Loss Variations:** Free-Space Path Loss (FSPL) fluctuates dynamically by up to 15 dB as a satellite transits from horizon ($10^\circ$ elevation) to zenith ($90^\circ$).
-3. **Severe Atmospheric & Rain Fade:** Millimeter-wave links (Ka-band at 26–40 GHz and V-band at 40–75 GHz) suffer heavy hydrometeor and gaseous absorption modeled according to ITU-R P.618 standards.
+3. **Atmospheric & Rain Fade:** Millimeter-wave links (Ka-band at 26–40 GHz and V-band at 40–75 GHz) suffer heavy hydrometeor and gaseous absorption modeled according to ITU-R P.618 standards.
 
-**PyOrbit-Link** provides aerospace systems and RF engineers with an end-to-end analytical framework. It couples NORAD Two-Line Element (TLE) acquisition, high-precision SGP4 orbit propagation, and physics-based RF link budgets with a **production-grade native iOS client** and a **multi-cloud RAG mission assistant**.
+**PyOrbit-Link** couples NORAD Two-Line Element (TLE) acquisition, SGP4 orbit propagation, and physics-based RF link budgets with a native iOS client and a multi-cloud telemetry assistant.
 
 ---
 
-## 🏛️ System Architecture
+## System Architecture
 
 ```mermaid
 flowchart TD
@@ -75,7 +75,7 @@ flowchart TD
 
 ---
 
-## 📐 RF & Telecommunications Formulations
+## RF & Telecommunications Formulations
 
 ### 1. Free-Space Path Loss (FSPL)
 
@@ -110,7 +110,7 @@ Where:
 - $k \approx 1.380649 \times 10^{-23} \text{ J/K}$ is Boltzmann's constant.
 - $B$ is channel bandwidth in Hz.
 
-### 📊 Sample Ka-Band Downlink Budget Breakdown (28 GHz)
+### Sample Ka-Band Downlink Budget Breakdown (28 GHz)
 
 | Parameter Description | Variable / Symbol | Nominal Value | Unit | Engineering Impact |
 | :--- | :--- | :--- | :--- | :--- |
@@ -125,7 +125,7 @@ Where:
 
 ---
 
-## 📱 Native iOS Client Architecture (`iOS/PyOrbitLink/`)
+## Native iOS Client Architecture (`iOS/PyOrbitLink/`)
 
 Built natively in Swift 5.9 and SwiftUI for iOS 17.0+:
 
@@ -137,7 +137,7 @@ Built natively in Swift 5.9 and SwiftUI for iOS 17.0+:
 | **4. Mission Planner** | Natural Language Parser | NL2Function parser converting plain English into mission parameters. |
 | **5. Anomaly Alerts** | `UserNotifications` | Real-time warnings when link margins degrade below thresholds. |
 
-### 📱 Client Architecture Comparison: Native SwiftUI vs. Web Client
+### Client Architecture Comparison: Native SwiftUI vs. Web Client
 
 | Feature Domain | Native SwiftUI iOS App (`iOS/PyOrbitLink`) | Python / Flask Web Client (`mobile_client/`) |
 | :--- | :--- | :--- |
@@ -149,18 +149,18 @@ Built natively in Swift 5.9 and SwiftUI for iOS 17.0+:
 
 ---
 
-## 🔬 Multi-Cloud RAG Mission Assistant
+## Multi-Cloud RAG Mission Assistant
 
-PyOrbit-Link integrates a decoupled AI telemetry analyst capable of running against **Google Gemini**, **Azure OpenAI**, or **Amazon Bedrock**:
+PyOrbit-Link integrates a decoupled AI telemetry analyst capable of running against Google Gemini, Azure OpenAI, or Amazon Bedrock:
 1. **Streaming Telemetry Analysis (`GET /api/simulate/stream`):** Server-Sent Events (SSE) push token-by-token engineering commentary as the pass unfolds.
 2. **Contextual Multi-Turn Chat (`POST /api/chat`):** Server-side session memory allowing flight controllers to query pass snapshots (e.g., *"Why did CNR drop below 8 dB at elevation 12°?"*).
-3. **NL2Function Mission Planner (`POST /api/plan`):** Parses plain-language flight instructions (*"Track ISS from Paris with Ka-band link budget"*) into validated parameters using strict schema allowlists.
+3. **NL2Function Mission Planner (`POST /api/plan`):** Parses plain-language flight instructions into validated parameters using schema allowlists.
 4. **Autonomous Anomaly Detection (`GET /api/alerts`):** Threaded background watcher evaluating rolling link saturation and Doppler margins.
 5. **Grounded Standards Briefings (`GET /api/briefing`):** Exports technical Markdown briefings grounded in `knowledge_base/sat_standards.txt`.
 
 ---
 
-## 📂 Repository Topology
+## Repository Topology
 
 ```text
 PyOrbit-Link/
@@ -188,7 +188,7 @@ PyOrbit-Link/
 
 ---
 
-## 🚀 Quickstart & Validation
+## Quickstart & Validation
 
 ### 1. Backend Server Setup
 
@@ -216,6 +216,6 @@ Open `iOS/PyOrbitLink/PyOrbitLink.xcodeproj` in Xcode 15+, select iPhone 15/16/1
 
 ---
 
-## 📄 License & Attribution
+## License & Attribution
 
 Distributed under the **MIT License**. Engineered and architected by **Hooman Parta** ([@hoomanp](https://github.com/hoomanp)).
